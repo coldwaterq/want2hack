@@ -38,7 +38,7 @@ defaults = {'DEBUG':True,
     'SERVER_GID':65535,
     'MAIL_SERVER':'smtp.gmail.com',
     'MAIL_PORT':587,
-    'MAIL_USE_TLS':True
+    'MAIL_USE_TLS':True,
     'DB_PASSWORD':'Set This',
     'MAIL_USERNAME':'Set This',
     'MAIL_PASSWORD':'Set This',

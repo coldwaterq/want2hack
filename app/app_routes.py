@@ -15,7 +15,7 @@ import traceback
 import re
 from urllib import quote
 
-app = Flask("__want2hack__") # This is not used correctly as of now.
+app = Flask("__main__") # This is not used correctly as of now.
 
 # Database Manager
 db_man = DatabaseManager(app)

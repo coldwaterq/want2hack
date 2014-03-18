@@ -7,8 +7,9 @@ bind9
 apparmor-utils
 python-pip
 python-tornado
+python-passlib
 
-sudo apt-get install python-flask postgresql python-psycopg2 postgresql-plpython3 bind9 apparmor-utils pip python-tornado
+sudo apt-get install python-flask postgresql python-psycopg2 postgresql-plpython3 bind9 apparmor-utils pip python-tornado python-passlib
 
 List of dependencies (install with pip)
 Flask-Mail

@@ -47,16 +47,16 @@ defaults = {'DEBUG':True,
     'CHALLENGE_TIMEOUT':3
     }
 conf = ConfigParser.SafeConfigParser(defaults)
-conf.read('/etc/want2hack/config')
+conf.read('/etc/want2hack.conf')
 
 # initialize some things if the DB_PASSWORD is 'Set This' since that
 # should be one of the first things to be configured.
 if( conf.get('DEFAULT','DB_PASSWORD') == 'Set This'):
     print('Either you choose the worst password for your database,\
         or you have yet to setup your config. You should be able to\
-        edit the file /etc/want2hack/config which I will now try to\
+        edit the file /etc/want2hack.conf which I will now try to\
         create. I will also attempt to set up apparmor for you.')
-    f = open('/etc/want2hack/config','w')
+    f = open('/etc/want2hack.conf','w')
     conf.write(f)
     f.close()
 
@@ -64,7 +64,7 @@ if( conf.get('DEFAULT','DB_PASSWORD') == 'Set This'):
     temp = temp.replace('{SERVER_ROOT}',app.config['SERVER_ROOT'])
     app.config['PRIV'].priv.addAppArmorProfile(app.config['SERVER_ROOT'][1:]+'app', temp)
 
-    raise RuntimeError('/etc/want2hack/config not set. do it')
+    raise RuntimeError('/etc/want2hack.conf not set. do it')
 
 # Read in the configs into the app
 for name in defaults.keys():

@@ -10,8 +10,8 @@ from datetime import datetime
 
 class DatabaseManager :
     __host = 'localhost'
-    __database = 'infsek'
-    __user = 'infsek'
+    __database = 'want2hack'
+    __user = 'want2hack'
     __port = None
 
     def __init__(self, app) :
@@ -44,7 +44,7 @@ class DatabaseManager :
     def user_rating(self, sql, conn, rating, challenge_id):
         try:
             sql.execute("""
-                Update infsek.sandbox
+                Update want2hack.sandbox
                 SET voted_difficulty=%s
                 WHERE challenge_id=%s AND attacker_id=%s AND complete='t';
                 """,[rating,challenge_id,g.user['user_id']])
@@ -60,7 +60,7 @@ class DatabaseManager :
     def get_difficulty_estimate(self, sql, conn, challenge_id, version):
         sql.execute("""
             SELECT difficulty_estimate
-            FROM infsek.challenge_edition
+            FROM want2hack.challenge_edition
             WHERE challenge_id=%s and version=%s;
             """,[challenge_id,version])
         return sql.fetchone()
@@ -71,7 +71,7 @@ class DatabaseManager :
             if(num is None):
                 sql.execute("""
                     SELECT u.username, u.attack_points, u.challenge_points
-                    FROM infsek.account u
+                    FROM want2hack.account u
                     ORDER BY u.attack_points+u.challenge_points DESC, 
                         u.challenge_points DESC,
                         u.attack_points DESC;
@@ -79,7 +79,7 @@ class DatabaseManager :
             else:
                 sql.execute("""
                     SELECT u.username, u.attack_points, u.challenge_points
-                    FROM infsek.account u
+                    FROM want2hack.account u
                     ORDER BY u.attack_points+u.challenge_points DESC, 
                         u.challenge_points DESC,
                         u.attack_points DESC
@@ -96,8 +96,8 @@ class DatabaseManager :
         try:
             sql.execute("""
                     SELECT u.username, h.description, h.user_points_received
-                    FROM infsek.hof h
-                    LEFT JOIN infsek.account u
+                    FROM want2hack.hof h
+                    LEFT JOIN want2hack.account u
                         ON h.user_id=u.user_id
                     WHERE h.description != 'You found the mithical teapot'
                     ORDER BY h.user_points_received DESC;
@@ -112,7 +112,7 @@ class DatabaseManager :
     def add_hall_of_fame(self, sql, conn, user_id, description, points):
         sql.execute("""
                 SELECT user_id
-                FROM infsek.hof
+                FROM want2hack.hof
                 WHERE user_id=%s
                     AND description=%s
                     AND user_points_received=%s;
@@ -120,19 +120,19 @@ class DatabaseManager :
         if sql.fetchone() is not None:
             return(False)
         sql.execute("""
-                INSERT INTO infsek.hof (user_id, description, user_points_received)
+                INSERT INTO want2hack.hof (user_id, description, user_points_received)
                 VALUES(%s,%s, %s);        
             """,[user_id, description, points])
         sql.execute("""
-                UPDATE infsek.account a
+                UPDATE want2hack.account a
                 SET attack_points = (COALESCE(
                         (SELECT SUM(user_points_received)
-                        FROM infsek.sandbox
+                        FROM want2hack.sandbox
                         WHERE attacker_id= a.user_id
                         and complete='t'),0)
                         +
                         COALESCE((SELECT SUM(h.user_points_received)
-                        FROM infsek.hof h
+                        FROM want2hack.hof h
                         WHERE h.user_id = a.user_id),0)
                     );
                 """,[])
@@ -143,7 +143,7 @@ class DatabaseManager :
     def update(self, sql, conn, challenge_id,version):
         try:
             sql.execute("""
-                UPDATE infsek.sandbox
+                UPDATE want2hack.sandbox
                 SET version_attacked=%s
                 WHERE challenge_id=%s and attacker_id=%s;
                 """,[version, challenge_id, g.user['user_id']])
@@ -157,16 +157,16 @@ class DatabaseManager :
     def publish(self, sql, conn, challenge_id, latest_version, difficulty_estimate):
         try:
             sql.execute("""
-                UPDATE infsek.challenge
+                UPDATE want2hack.challenge
                 SET latest_published_version=%s, latest_version=%s
                 WHERE challenge_id=%s AND owner_id=%s;
                 """,[latest_version, latest_version+1 ,challenge_id,g.user['user_id']])
             sql.execute("""
-                INSERT INTO infsek.challenge_edition (challenge_id, version, difficulty_estimate)
+                INSERT INTO want2hack.challenge_edition (challenge_id, version, difficulty_estimate)
                 VALUES(%s,%s, %s);            
                 """,[challenge_id, latest_version+1, difficulty_estimate])            
             sql.execute("""
-                UPDATE infsek.challenge_edition
+                UPDATE want2hack.challenge_edition
                 SET published='t'
                 WHERE challenge_id=%s AND version=%s;
                 """,[challenge_id, latest_version])
@@ -197,14 +197,14 @@ class DatabaseManager :
         try:
             if(approve):
                 sql.execute("""
-                    UPDATE infsek.challenge
+                    UPDATE want2hack.challenge
                     SET latest_approved_version=latest_published_version
                     WHERE challenge_id=%s
                     RETURNING latest_approved_version;
                     """,[challenge_id])
                 version = sql.fetchone()[0]
                 sql.execute("""
-                    UPDATE infsek.challenge_edition
+                    UPDATE want2hack.challenge_edition
                     SET approved='t'
                     WHERE challenge_id=%s AND version=%s;
                     """,[challenge_id, version])
@@ -212,17 +212,17 @@ class DatabaseManager :
             else:
                 sql.execute("""
                     SELECT latest_published_version
-                    from infsek.challenge
+                    from want2hack.challenge
                     WHERE challenge_id=%s;
                     """,[challenge_id])
                 version = sql.fetchone()[0]
                 sql.execute("""
-                    UPDATE infsek.challenge
+                    UPDATE want2hack.challenge
                     SET latest_published_version=latest_approved_version
                     WHERE challenge_id=%s;
                     """,[challenge_id])
                 sql.execute("""
-                    UPDATE infsek.challenge_edition
+                    UPDATE want2hack.challenge_edition
                     SET published='f'
                     WHERE challenge_id=%s AND version=%s;
                     """,[challenge_id, version])
@@ -237,7 +237,7 @@ class DatabaseManager :
     def checkout_challenge(self, sql, conn, user_id, challenge_id, version):
         try:
             sql.execute("""
-                INSERT INTO infsek.sandbox (challenge_id, attacker_id, version_attacked)
+                INSERT INTO want2hack.sandbox (challenge_id, attacker_id, version_attacked)
                 VALUES (%s, %s, %s);
                 """,[challenge_id, user_id, version])
             conn.commit()
@@ -259,11 +259,11 @@ class DatabaseManager :
             # only session provided
             if type(sesh) is str :
                 id,token = sesh.split('|')
-                sql.execute("SELECT user_id, username, attack_points, challenge_points, email FROM infsek.account WHERE user_id = %s AND session_token = %s LIMIT 1;", [id,token])
+                sql.execute("SELECT user_id, username, attack_points, challenge_points, email FROM want2hack.account WHERE user_id = %s AND session_token = %s LIMIT 1;", [id,token])
                 user = sql.fetchone()
             # only username provided
             elif username is not None :
-                sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points, email FROM infsek.account WHERE username = %s LIMIT 1;", [username])
+                sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points, email FROM want2hack.account WHERE username = %s LIMIT 1;", [username])
                 user = sql.fetchone()
             # return None
             else :
@@ -284,13 +284,13 @@ class DatabaseManager :
             if admin:
                 sql.execute("""
                 Select *
-                from infsek.challenge
+                from want2hack.challenge
                 where challenge_id=%s;
                 """, [challenge_id])# ther first version must be approved
             else:
                 sql.execute("""
                     Select *
-                    from infsek.challenge
+                    from want2hack.challenge
                     where challenge_id=%s 
                     and (owner_id=%s or latest_approved_version IS NOT Null) and not deleted;
                     """, [challenge_id, g.user['user_id']])# ther first version must be approved
@@ -317,8 +317,8 @@ class DatabaseManager :
             if type(user_id) is int :
                 sql.execute("""
                     SELECT c.challenge_id, c.challenge_name, c.description, c.latest_version, c.latest_approved_version, ce.difficulty_estimate, ce.difficulty, ce.approved
-                    FROM infsek.challenge c
-                        JOIN infsek.challenge_edition ce 
+                    FROM want2hack.challenge c
+                        JOIN want2hack.challenge_edition ce 
                             ON ce.challenge_id = c.challenge_id
                             AND ce.version = """+version+"""
                     WHERE c.owner_id = %s and deleted = 'f'
@@ -330,8 +330,8 @@ class DatabaseManager :
             else :
                 sql.execute("""
                     SELECT c.challenge_id, c.challenge_name, c.description, c.latest_version, c.latest_approved_version, c.owner_id, ce.difficulty_estimate, ce.difficulty, ce.approved
-                    FROM infsek.challenge c
-                        JOIN infsek.challenge_edition ce 
+                    FROM want2hack.challenge c
+                        JOIN want2hack.challenge_edition ce 
                             ON ce.challenge_id = c.challenge_id
                             AND ce.version = """+version+"""
                     WHERE c.deleted = 'f'
@@ -349,7 +349,7 @@ class DatabaseManager :
     def forfeit_challenge(self, sql, conn, challenge_id):
         try:
             sql.execute("""
-                DELETE FROM infsek.sandbox
+                DELETE FROM want2hack.sandbox
                 WHERE challenge_id=%s 
                     and attacker_id=%s;
                 """,[challenge_id, g.user['user_id']])
@@ -365,7 +365,7 @@ class DatabaseManager :
     def delete_challenge(self, sql, conn, challenge_id):
         try:
             sql.execute("""
-                UPDATE infsek.challenge SET deleted='t' 
+                UPDATE want2hack.challenge SET deleted='t' 
                     WHERE challenge_id=%s and owner_id=%s
                 """, [challenge_id, g.user['user_id']])
             conn.commit()
@@ -382,11 +382,11 @@ class DatabaseManager :
     def update_challenge(self, sql, conn, challenge_id, name, difficulty, version, description):
         try:
             sql.execute("""
-                UPDATE infsek.challenge SET challenge_name = %s, description = %s
+                UPDATE want2hack.challenge SET challenge_name = %s, description = %s
                     WHERE challenge_id=%s and owner_id=%s
                 """, [name, description, challenge_id, g.user['user_id']])
             sql.execute("""
-                UPDATE infsek.challenge_edition
+                UPDATE want2hack.challenge_edition
                 SET difficulty_estimate=%s
                 WHERE challenge_id=%s and version=%s;
                 """,[difficulty,challenge_id, version])
@@ -402,12 +402,12 @@ class DatabaseManager :
         try :
             flag = self.genkey(124)
             sql.execute("""
-                INSERT INTO infsek.challenge (owner_id, description, flag_seed, challenge_name)
+                INSERT INTO want2hack.challenge (owner_id, description, flag_seed, challenge_name)
                 VALUES (%s,%s,%s,%s) RETURNING challenge_id;
                 """, [g.user['user_id'], "", flag, challenge_name])
             challenge_id = sql.fetchone()['challenge_id']
             sql.execute("""
-                INSERT INTO infsek.challenge_edition (challenge_id)
+                INSERT INTO want2hack.challenge_edition (challenge_id)
                 VALUES (%s)
                 """, [str(challenge_id)])
             conn.commit()
@@ -423,32 +423,32 @@ class DatabaseManager :
         try:
             diff = self.get_challenge_difficulty(challenge_id=challenge_id)
             sql.execute("""
-                UPDATE infsek.sandbox
+                UPDATE want2hack.sandbox
                 SET complete='t'
                 WHERE challenge_id=%s and attacker_id=%s
                 RETURNING version_attacked;
                 """,[challenge_id, g.user['user_id']])
             version = sql.fetchone()[0]
             sql.execute("""
-                UPDATE infsek.sandbox
+                UPDATE want2hack.sandbox
                 SET user_points_received=%s
                 WHERE challenge_id=%s and version_attacked=%s and complete='t';
                 """,[diff, challenge_id, version])
             sql.execute("""
-                UPDATE infsek.account a
+                UPDATE want2hack.account a
                 SET attack_points = (COALESCE(
                         (SELECT SUM(user_points_received)
-                        FROM infsek.sandbox
+                        FROM want2hack.sandbox
                         WHERE attacker_id= a.user_id
                         and complete='t'),0)
                         +
                         COALESCE((SELECT SUM(h.user_points_received)
-                        FROM infsek.hof h
+                        FROM want2hack.hof h
                         WHERE h.user_id = a.user_id),0)
                     );
                 """,[])
             sql.execute("""
-                UPDATE infsek.account a
+                UPDATE want2hack.account a
                 SET challenge_points = (
                     SELECT SUM(b.difficulty)
                     FROM (
@@ -491,8 +491,8 @@ class DatabaseManager :
             if type(user_id) is int :
                 sql.execute("""
                     SELECT c.challenge_name, c.flag_seed, c.owner_id, c.challenge_id, s.*, ((c.owner_id=%s and c.latest_version = s.version_attacked) or (c.owner_id != %s and c.latest_approved_version = s.version_attacked)) AS is_latest_version 
-                    FROM infsek.sandbox as s
-                    JOIN infsek.challenge as c 
+                    FROM want2hack.sandbox as s
+                    JOIN want2hack.challenge as c 
                         ON c.challenge_id = s.challenge_id
                     WHERE s.attacker_id = %s and c.deleted = 'f' """+completed_and_version+id_include+""";
                     """, [user_id, user_id, user_id, challenge_id] if challenge_id is not None else [user_id, user_id, user_id])
@@ -514,9 +514,9 @@ class DatabaseManager :
         try :
             if type(challenge_id) is int :
                 sql.execute("""
-                    SELECT a.username, a.attack_points+a.challenge_points as points, s.version_attacked FROM infsek.challenge c
-                        JOIN infsek.sandbox s ON s.challenge_id = c.challenge_id
-                        JOIN infsek.account a ON a.user_id = s.attacker_id
+                    SELECT a.username, a.attack_points+a.challenge_points as points, s.version_attacked FROM want2hack.challenge c
+                        JOIN want2hack.sandbox s ON s.challenge_id = c.challenge_id
+                        JOIN want2hack.account a ON a.user_id = s.attacker_id
                     WHERE s.challenge_id = %s and s.complete='t';
                     """, [challenge_id])
 
@@ -536,27 +536,27 @@ class DatabaseManager :
             sql.execute("""
                 SELECT 
                     ((SELECT ce3.difficulty_estimate 
-                    FROM infsek.challenge_edition ce3 
+                    FROM want2hack.challenge_edition ce3 
                     WHERE ce3.challenge_id = c1.challenge_id
                     AND ce3.version = c1.latest_approved_version))
                     AS diff_estimate,
-                ((SELECT avg(s2.voted_difficulty) FROM infsek.sandbox s2
+                ((SELECT avg(s2.voted_difficulty) FROM want2hack.sandbox s2
                 WHERE s2.complete = 't'
                 AND s2.challenge_id = c1.challenge_id
                 AND s2.version_attacked = c1.latest_approved_version
                 AND s2.voted_difficulty is not NULL) * 0.5)
                     +
                     (SELECT 
-                        ((SELECT count(*) FROM infsek.sandbox s4
+                        ((SELECT count(*) FROM want2hack.sandbox s4
                         WHERE s4.challenge_id = c1.challenge_id
                         AND s4.version_attacked = c1.latest_approved_version)
                         / 
-                        (SELECT count(*)-.01 FROM infsek.sandbox s4
+                        (SELECT count(*)-.01 FROM want2hack.sandbox s4
                         WHERE s4.complete = 't'
                         AND s4.challenge_id = c1.challenge_id
                         AND s4.version_attacked = c1.latest_approved_version)) * 0.2)
                 AS difficulty, c1.latest_approved_version
-                FROM infsek.challenge c1
+                FROM want2hack.challenge c1
                 WHERE c1.challenge_id = %s
                 """,[challenge_id])
             answer = sql.fetchone()
@@ -569,27 +569,27 @@ class DatabaseManager :
             sql.execute("""
                 SELECT 
                     ((SELECT ce3.difficulty_estimate 
-                    FROM infsek.challenge_edition ce3 
+                    FROM want2hack.challenge_edition ce3 
                     WHERE ce3.challenge_id = c1.challenge_id
                     AND ce3.version = %s) )
                     AS diff_estimate,
-                ((SELECT avg(s2.voted_difficulty) FROM infsek.sandbox s2
+                ((SELECT avg(s2.voted_difficulty) FROM want2hack.sandbox s2
                 WHERE s2.complete = 't'
                 AND s2.challenge_id = c1.challenge_id
                 AND s2.version_attacked = %s
                 AND s2.voted_difficulty is not NULL) * 0.5)
                     +
                     (SELECT 
-                        ((SELECT count(*) FROM infsek.sandbox s4
+                        ((SELECT count(*) FROM want2hack.sandbox s4
                         WHERE s4.challenge_id = c1.challenge_id
                         AND s4.version_attacked = %s)
                         / 
-                        (SELECT count(*)-.01 FROM infsek.sandbox s4
+                        (SELECT count(*)-.01 FROM want2hack.sandbox s4
                         WHERE s4.complete = 't'
                         AND s4.challenge_id = c1.challenge_id
                         AND s4.version_attacked = %s)) * 0.20)
                 AS difficulty
-                FROM infsek.challenge c1
+                FROM want2hack.challenge c1
                 WHERE c1.challenge_id = %s
                 """,[version, version, version, version, challenge_id])
             answer = sql.fetchone()
@@ -601,7 +601,7 @@ class DatabaseManager :
             return None
         difficulty = difficulty*10
         sql.execute("""
-            UPDATE infsek.challenge_edition
+            UPDATE want2hack.challenge_edition
             SET difficulty=%s
             WHERE challenge_id=%s and version=%s
             """,[difficulty, challenge_id, version])
@@ -620,7 +620,7 @@ class DatabaseManager :
     def user_signup(self,sql,conn, username, email, conf_key) :
         try:
             sql.execute("""
-                INSERT INTO infsek.account (username, email, confirmation)
+                INSERT INTO want2hack.account (username, email, confirmation)
                 VALUES (%s,%s,%s)
                 """, [username, email, conf_key])
             conn.commit()
@@ -632,7 +632,7 @@ class DatabaseManager :
     @connect_func
     def password_reset(self,sql,conn, username, conf_key) :
         sql.execute("""
-            UPDATE infsek.account
+            UPDATE want2hack.account
             SET confirmation=%s 
             WHERE username=%s
             RETURNING email;
@@ -649,7 +649,7 @@ class DatabaseManager :
         try :
             if type(sesh) is str :
                 query = """
-                    UPDATE infsek.account SET session_token = NULL
+                    UPDATE want2hack.account SET session_token = NULL
                     WHERE session_token = %s
                     RETURNING 't'
                 """
@@ -670,7 +670,7 @@ class DatabaseManager :
         try :
             if confirmation is not None:
                 query = """
-                    SELECT user_id, confirmation FROM infsek.account
+                    SELECT user_id, confirmation FROM want2hack.account
                     WHERE username = %s
                 """
                 sql.execute(query, [username])
@@ -680,7 +680,7 @@ class DatabaseManager :
                 if password is not None:
                     password = bcrypt.encrypt(password)
                 query = """
-                    UPDATE infsek.account SET confirmation = NULL, password=%s WHERE user_id = %s;
+                    UPDATE want2hack.account SET confirmation = NULL, password=%s WHERE user_id = %s;
                 """
 
                 # this breaks if the confirmation was invalid
@@ -691,7 +691,7 @@ class DatabaseManager :
                 skip_validate = True
             else :
                 query = """
-                    SELECT user_id, password FROM infsek.account 
+                    SELECT user_id, password FROM want2hack.account 
                     WHERE username = %s;
                 """
                 sql.execute(query, [username])

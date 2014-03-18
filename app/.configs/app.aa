@@ -22,6 +22,8 @@
     /etc/apport/** r,
     /run/shm/** lrw,
     /etc/ssl/openssl.cnf r,
+    /etc/want2hack.conf rw,
+    /var/log/want2hack.log w,
 
     /sbin/ldconfig ix,
     /usr/bin/gcc-4.6 ix,

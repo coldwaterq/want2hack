@@ -3,7 +3,7 @@
 {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/** {
     set rlimit nproc <= 5,
     set rlimit fsize <= 200K,
-    set rlimit as <= 50M,
+    set rlimit as <= 100M,
     set rlimit nofile <= 75,
     {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/** rwklmpx,
     {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/ rwklmpx,

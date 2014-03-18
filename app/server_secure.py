@@ -5,8 +5,8 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import tornado
 import os
-import drop_privileges as priv
 from app_config import app
+import drop_privileges as priv
 
 app.config["SSL"] = True
 
@@ -31,8 +31,8 @@ app.config['PRIV']=priv
 
 tornado.process.fork_processes(0)
 server = HTTPServer(WSGIContainer(ChangeServer(app)), ssl_options={
-    "certfile": os.path.join(app.config['KEY_DIR'], "infsek.crt"),
-    "keyfile": os.path.join(app.config['KEY_DIR'], "infsek.key"),
+    "certfile": os.path.join(app.config['KEY_DIR'], "want2hack.crt"),
+    "keyfile": os.path.join(app.config['KEY_DIR'], "want2hack.key"),
 })
 server.add_sockets(sockets)
 IOLoop.instance().start()

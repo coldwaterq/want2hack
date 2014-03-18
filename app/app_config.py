@@ -14,6 +14,7 @@ import traceback
 from flask_mail import Mail
 import logging
 import ConfigParser
+from os import urandom
 
 app = app_routes.app
 
@@ -29,7 +30,7 @@ app.config['EMAIL_REGEX'] = '^[a-zA-Z0-9+_.\-]*@[a-zA-Z0-9+_.\-]*$'
 
 # Configurable Configuration, use the configuration file
 defaults = {'DEBUG':True,
-    'SESSION_COOKIE_SECURE': False,
+    'SESSION_COOKIE_SECURE': True,
     'SERVER_ROOT':'Set This',
     'SERVER_NAME':'testing.test',
     'SERVER_ADDR':'127.0.0.1',
@@ -63,9 +64,24 @@ if( conf.get('DEFAULT','DB_PASSWORD') == 'Set This'):
     raise RuntimeError('/etc/want2hack.conf not set. do it')
 
 # Read in the configs into the app
+def getvalue(option):
+    try:
+        return conf.getint('DEFAULT', option)
+    except ValueError:
+        pass
+    try:
+        return conf.getfloat('DEFAULT', option)
+    except ValueError:
+        pass
+    try:
+        return conf.getboolean('DEFAULT', option)
+    except ValueError:
+        pass
+    return conf.get('DEFAULT', option)
+
 for name in defaults.keys():
-    app.config[name] = conf.get('DEFAULT', name)
-    print name
+    app.config[name] = getvalue( name )
+app.config['ADMIN_USERS'] = eval(app.config['ADMIN_USERS'])
 app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     app.config['MAIL_USERNAME'])
     
@@ -73,7 +89,7 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
 from logging import FileHandler
 import logging
 fhandler = FileHandler('/var/log/want2hack.log', mode='a')
-fhandler.setLevel(logging.ERROR)
+fhandler.setLevel(logging.INFO)
 app.logger.addHandler(fhandler)
 
 print("The current root of the server is "+app.config['SERVER_ROOT'])
@@ -82,14 +98,5 @@ app.url_map.default_subdomain =''
 
 # The Mailer, because it was initialized before the settings otherwise
 app.config['MAIL'] = Mail(app)
-
-# setup apparmor when the server is started if it hasn't been already
-if (app.config['SERVER_ROOT'] != 'Set This'):
-    try:
-        open('/etc/shadow')
-        print 'apparmor isn\'t set up so I will try that now for the server'
-        temp = open('.configs/app.aa').read()
-        temp = temp.replace('{SERVER_ROOT}',app.config['SERVER_ROOT'])
-        app.config['PRIV'].priv.addAppArmorProfile(app.config['SERVER_ROOT'][1:]+'app', temp)
-    except:
-        pass
+    
+app.secret_key = urandom(24)

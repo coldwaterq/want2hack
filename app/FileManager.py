@@ -25,7 +25,7 @@ class FileManager :
         try:
             fi = self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/base/'+foldername
             if fi[-1]=='/':
-		fi=fi[:-1]
+                fi=fi[:-1]
             if(not path.normpath(fi) == fi and foldername != ''):
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
             if(not secure_filename(filename) == filename):
@@ -38,8 +38,8 @@ class FileManager :
             chmod(fi, S.S_IRWXU | S.S_IRWXG | S.S_IRWXO)
             return('The file has been made')
         except Exception, e:
-            traceback.print_exc()
-            return('There was an error making that file')	
+            self.app.logger.warning('make_file '+str(e))
+            return('There was an error making that file')        
 
     # challenge_id
     # name
@@ -54,15 +54,15 @@ class FileManager :
                 rmdir(fi)
             return('The removal worked')
         except Exception, e:
-            traceback.print_exc()
+            self.app.logger.warning('remove_file '+str(e))
             return('There was an error removing that file')
 
 
     # challenge_id needed to make the folder
     def create_challenge(self, challenge_id):
         # if the challenge id is at all controlled by the user,
-	# it needs to be changed because file injection would
-	# be possible
+        # it needs to be changed because file injection would
+        # be possible
         makedirs(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/base')
 
     # challenge_id is the challenges id
@@ -148,18 +148,17 @@ class FileManager :
             try:
                 resp = self.make_response_challenge(attacker, challenge_id, directory)
             except Exception, e:
-		if(self.app.config['DEBUG']):
-		    print 'Execution of file failed, reading file'
-                    traceback.print_exc()
+                if(self.app.config['DEBUG']):
+                    self.app.logger.warning('serve_challenge_file1 '+str(e))
                 try:
                     return(make_response(open(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'+directory).read()))
-		except:
-		    return(make_response(self.app.config['CHALLENGE_PAGE_404']))
+                except:
+                    return(make_response(self.app.config['CHALLENGE_PAGE_404']))
             return make_response(resp)        
-	except ImATeapot, e:
+        except ImATeapot, e:
             raise e
-	except Exception, e:
-            traceback.print_exc()
+        except Exception, e:
+            self.app.logger.warning('serve_challenge_file2 '+str(e))
 
     def addEnv(self, name, env):
         try:
@@ -173,21 +172,21 @@ class FileManager :
         length = int(request.environ.get('CONTENT_LENGTH', '0'))
         data = request.environ['wsgi.input'].read(length)
         envi = {'REDIRECT_STATUS':'true',
-	   'REQUEST_METHOD':request.method,
-	   'SCRIPT_FILENAME':f,
-	   'SCRIPT_NAME':directory.split('/')[-1],
-	   'PATH_INFO':'/',
-	   'SERVER_NAME':self.app.config['SERVER_NAME'],
-	   'SERVER_ADDR':self.app.config['SERVER_ADDR'],
-	   'REQUEST_TIME':str(int(time())),
-	   'REQUEST_TIME_FLOAT':str(time()),
-	   'DOCUMENT_ROOT':'/',
-	   'REMOTE_ADDR':request.remote_addr,
-	   'SERVER_ADMIN':'Secret',
-	   'PATH_TRANSLATED':f,
-	   'GATEWAY_INTERFACE':'CGI/1.1',
-	   'CONTENT_LENGTH':str(length),
-	   }
+           'REQUEST_METHOD':request.method,
+           'SCRIPT_FILENAME':f,
+           'SCRIPT_NAME':directory.split('/')[-1],
+           'PATH_INFO':'/',
+           'SERVER_NAME':self.app.config['SERVER_NAME'],
+           'SERVER_ADDR':self.app.config['SERVER_ADDR'],
+           'REQUEST_TIME':str(int(time())),
+           'REQUEST_TIME_FLOAT':str(time()),
+           'DOCUMENT_ROOT':'/',
+           'REMOTE_ADDR':request.remote_addr,
+           'SERVER_ADMIN':'Secret',
+           'PATH_TRANSLATED':f,
+           'GATEWAY_INTERFACE':'CGI/1.1',
+           'CONTENT_LENGTH':str(length),
+           }
         self.addEnv('SERVER_PROTOCOL',envi)
         self.addEnv('REQUEST_URI',envi)
         self.addEnv('QUERY_STRING',envi)
@@ -205,7 +204,7 @@ class FileManager :
         for (key,value) in request.headers:
             if(key.upper() == 'COOKIE'):
                 cookies = value.split(';')
-     	        c = []
+                c = []
                 for cookie in cookies:
                     if(self.app.config['SESSION_COOKIE_NAME'] not in cookie):
                         c.append(cookie)
@@ -220,7 +219,7 @@ class FileManager :
                 stdin=PIPE,
                 stderr=PIPE,
                 env = envi,
-		cwd=f.rpartition('/')[0]+'/')
+                cwd=f.rpartition('/')[0]+'/')
             p.stdin.write(data)
             p.stdin.close()
             t = time()
@@ -283,4 +282,4 @@ class FileManager :
         except Exception, e:
             rmtree(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker)
             raise
-	
+        

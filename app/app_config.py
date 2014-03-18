@@ -60,10 +60,6 @@ if( conf.get('DEFAULT','DB_PASSWORD') == 'Set This'):
     conf.write(f)
     f.close()
 
-    temp = open('.configs/app.aa').read()
-    temp = temp.replace('{SERVER_ROOT}',app.config['SERVER_ROOT'])
-    app.config['PRIV'].priv.addAppArmorProfile(app.config['SERVER_ROOT'][1:]+'app', temp)
-
     raise RuntimeError('/etc/want2hack.conf not set. do it')
 
 # Read in the configs into the app
@@ -87,4 +83,13 @@ app.url_map.default_subdomain =''
 # The Mailer, because it was initialized before the settings otherwise
 app.config['MAIL'] = Mail(app)
 
-
+# setup apparmor when the server is started if it hasn't been already
+if (app.config['SERVER_ROOT'] != 'Set This'):
+    try:
+        open('/etc/shadow')
+        print 'apparmor isn\'t set up so I will try that now for the server'
+        temp = open('.configs/app.aa').read()
+        temp = temp.replace('{SERVER_ROOT}',app.config['SERVER_ROOT'])
+        app.config['PRIV'].priv.addAppArmorProfile(app.config['SERVER_ROOT'][1:]+'app', temp)
+    except:
+        pass

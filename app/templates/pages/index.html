@@ -1,0 +1,14 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-24">
+	<h1>Learn to hack</h1>
+	<p>Sign up now and you can learn from the rest of us how web sites can be hacked. Hopefully to help protect your self and others.</p>
+	<a class="pure-button pure-button-primary" href="/user/signup">Sign Up</a>
+</div>
+<div class="pure-u-1-24"></div>
+<div class="pure-u-5-12">
+	<h1>Leaderboard</h1>
+	{% include "../injects/_leaderboard.html" %}
+</div>
+{% endblock %}

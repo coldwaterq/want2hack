@@ -1,0 +1,6 @@
+*.pyc
+/base/*.pyc
+*~
+*.scssc
+*.swp
+sand/

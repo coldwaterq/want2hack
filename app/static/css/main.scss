@@ -1,0 +1,101 @@
+/* I don't believe this is used, commenting out to see if anything breaks before removal
+
+$teal: #00CCFF !important;
+
+/* HEADER */
+.header {
+  margin-top: 25px;
+  height: 75px; 
+  padding-bottom: 20px;
+}
+
+.logo {
+    margin-right: 20px;
+}
+
+.navbar .brand {
+    margin-top: -25px;
+    margin-left: -100px;
+    color: $teal;
+}
+/* MAIN */
+.main {
+  padding: 15px 0 15px 0; }
+
+.wrapper {
+  border-top: 1px #b4b4b4 solid;
+  border-bottom: 1px #b4b4b4 solid;
+  background-color: #eee;
+  min-height: 400px;
+  padding: 20px 0 10px 0; }
+
+/* FINAL COLORS */
+.teal {
+    background-color: $teal;
+}
+.gray {
+  background-color: #d9dcd9; }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block; }
+
+/* The white background content wrapper */
+.container > .content {
+  background-color: #fff;
+  padding: 20px;
+  margin: 0 -20px;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  -moz-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
+
+.login-form {
+  margin-left: 65px; }
+
+legend {
+  margin-right: -50px;
+  font-weight: bold;
+  color: #404040; }
+
+.score {
+  float: left; }
+
+.meta span {
+  margin-left: 15px; }
+
+/* FOOTER */
+.footer .navbar .nav > li {
+    padding: 10px 15px 10px;
+}
+
+/* CHALLENGE */
+.challenge {
+  padding: 15px;
+  background: #f0f072;
+  margin-top: 3px; }
+
+/* UNIQUE FUCKING IDS */
+#authors {
+    width: 400px;
+    color: gray;
+}
+
+#intro {
+    margin-bottom: 40px;
+}
+
+#navright {
+    width: 350px;
+}
+
+#search {
+    width: 283px;
+}
+
+/* WEIRD ASS CLASSES */
+
+*/

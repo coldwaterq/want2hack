@@ -1,0 +1,111 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<script type="text/javascript">
+function completed(){
+	$("#current").attr('style','visibility:hidden;position:absolute;');
+	$("#completed").attr('style','margin:auto;display:block;');
+	button = $("#button");
+	button.val("Current Challenges");
+	button.attr('onclick','current();');
+}
+
+function current(name){
+        $("#current").attr('style','');
+	$("#completed").attr('style','visibility:hidden;position:absolute;');
+	button = $("#button");
+	button.val("Completed Challenges");
+	button.attr('onclick','completed();');
+}
+</script>
+
+<div class="dashboard pure-u-1-24">
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-12" >
+	<h1>Create</h1>
+	<form action="/dashboard/challenge/new" method="POST">
+		<input type="text" class="pure-input pure-u-1-2" name="name" placeholder="name"/>
+		<input class="pure-button pure-u-11-24" type=submit value="Make Challenge"/>
+		<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+	</form>
+	<br/>
+	{% if not challenges %}
+		<p>Try making a challenge, and helping the others to learn.If you don't know how to start check out the <a href='/blog'>blog</a>.</p>
+	{% else %}
+		<table class="pure-table pure-table-horizontal" >
+			<tbody>
+				{% for challenge in challenges %}
+						<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" {% if( challenges.index(challenge) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+							<td>{{challenge['challenge_name']}}</td>
+							<td><a href="/dashboard/challenge/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button"><i class="icon-edit icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Edit</span></button></a></td>
+							<form action="/dashboard/challenge/delete" method="post">
+								<input type="hidden" name="challenge_id" value="{{challenge['challenge_id']}}"/>
+								<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+								<td><button type="submit" class="pure-button pure-u-1" style="background: rgb(255, 80, 80);" ><i class="icon-trash icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Delete</span></button></td>
+							</form>
+						</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>
+</div>
+<div class="dashboard pure-u-1">
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-12">
+	<h1>Attack</h1>
+	<a class="pure-button pure-u-11-12" href="/challenges">Find a Challenge</a>
+	<p></p>
+	<input id="button" class="pure-button pure-u-11-12" onclick="completed();" value="Completed Challenges"></button>
+	<p>
+	{% if not attacked %}
+		<p>You are not currently working on any challenges, <a href="/challenges">Find one now</a></p>
+	{% else %}
+		<table id="current" class="pure-table pure-table-horizontal" >
+			<tbody>
+				{% for attack in attacked %}
+					{% if not attack['complete'] %}					
+						<tr onclick="document.location='/dashboard/challenge/{{attack['challenge_id']}}';" >
+							<td>{{attack['challenge_name']}} v{{attack['version_attacked']}}</td>
+							<td><a href="/challenge/restart/{{attack['challenge_id']}}"><button class="pure-u-1 pure-button"><i class="icon-repeat icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Restart</span></button></a></td>
+							<td>
+								{% if not attack['is_latest_version'] %}
+									<a href="/dashboard/attack/update/{{attack['challenge_id']}}" ><button class="pure-u-1 pure-button"><i class="icon-chevron-sign-up icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Update</span></button></a>
+								{% else %}
+									<a href="/challenge/landing/{{attack['challenge_id']}}" ><button class="pure-u-1 pure-button"><i class="icon-gamepad icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Attack!</span></button></a>
+								{% endif %}
+							</td>
+							<td><a href="/dashboard/attack/forfeit/{{attack['challenge_id']}}"><button class="pure-u-1 pure-button"><i class="icon-flag-alt icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Give up</span></button></a></td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+		<div id="completed"  style="visibility:hidden;position:absolute;">
+			<table class="pure-table pure-table-horizontal">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Version</th>
+						<th>Points</th>
+						<th>Action</th>
+					<tr>
+				<thead>
+				<tbody>
+					{% for attack in attacked %}
+						{% if attack['complete'] %}					
+							<tr onclick="document.location='/dashboard/challenge/{{attack['challenge_id']}}';" >
+								<td>{{attack['challenge_name']}} </td>
+								<td>{{attack['version_attacked']}}</td>
+								<td>{{attack['user_points_received']}}</td>
+								<td>{% if not attack['voted_difficulty'] %}
+									<a href="/challenge/finish/{{attack['challenge_id']}}"><button class="pure-u-1 pure-button"><i class="icon-check icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Vote</span></button></a>
+								{% endif %}</td>
+						{% endif %}
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-12">
+	<div class="pure-u-1">
+	<h1>Blog</h1>
+	<h2>Creating a challenge</h2>
+	<p>I will explain how to make a challenge. Please send any questions you may have to want2hack.announcement[at]gmail.com</p>
+	<p>When you come up with the idea for your challenge you will first need to decide what files need to be made and weather each file will use python, php, or static content to work. If you want static content just write it in directly. If you want php or python the file must have the first line as <b>#!/usr/bin/php-cgi</b> or <b>#!/usr/bin/python</b> respectivly.</p>
+	<p>I will show how to make a python password sql injection bypass. It demonstraits a few things and should make for a nice example for continuing to make other challenges.</p>
+	<ol>
+		<li>Start by creating a challenge on the dashboard interface.</li>
+		<li>In that challenges management window you can create a file called index.py
+			<p><b>Note:</b> to have a file load when a directory is called it must be named index, index.py, index.php, or index.html</p>
+		</li>
+		<li>Select to edit this file</li>
+		<li>The code I used was as follows
+		<pre style="border-style:solid;border-width:1px;"><code>#!/usr/bin/python
+import cgi
+import sqlite3
+from os import path
+print(&#39;&#39;)
+print(&#39;&#39;)
+form = cgi.FieldStorage()
+try:
+    username = form[&#39;username&#39;].value
+    password = form[&#39;password&#39;].value
+except:
+    username = &#39;&#39;
+    password = &#39;&#39;
+if not path.exists(&#39;users.db&#39;):
+    conn = sqlite3.connect(&#39;users.db&#39;)
+    conn.execute(&#39;CREATE TABLE users (name, password);&#39;)
+    conn.execute(&#39;INSERT INTO users VALUES (\&#39;admin\&#39;,\&#39;alphojdlfkjsdlakdjfalkjdfsk\&#39;)&#39;)
+    conn.commit()
+    conn.close()
+
+conn = sqlite3.connect(&#39;users.db&#39;)
+c = conn.cursor()
+c.execute(&quot;SELECT * FROM users WHERE name = &#39;%s&#39; and password = &#39;%s&#39;&quot; % (username, password))
+if(c.fetchone() != None):
+    print &#39;9A2W6D3HTX9IG5BZQXHABQ6I124IN6C2KM7JGX1L5U7XOTL3PVZKVC9SXYI9E6T612R76NV52VBXPRD6LZAECGK7PW7V68UUN1QCIS9HRFODX27V6KKEKNO18TL8&#39;
+print(&quot;&quot;&quot;&lt;p&gt;can you log in as the user admin?&lt;/p&gt;
+&lt;form method=&quot;post&quot; action=&quot;&quot;&gt;
+	&lt;label&gt;username:&lt;input name=&quot;username&quot;/&gt;&lt;/label&gt;
+	&lt;label&gt;password:&lt;input type=&quot;password&quot; name=&quot;password&quot;/&gt;&lt;/label&gt;
+	&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;submit&quot;/&gt;
+&lt;/form&gt;&quot;&quot;&quot;)
+conn.close()
+</code></pre><p><b>Note:</b> the long value printed when the user logs in correctly must be the win token specific to the challenge</li>
+	<li>Press save</li>
+	<li>Now you can check publish and hit update to publish the challenge or test it usin the button on the top.</li>
+</ol>
+<p>Now I will explain my code for those that need it. the first line is the hash bang making it run as python. then you see the imports so that python will work.</p>
+<p>The two print('') statements tells the server that this is the body. Everything before two blank lines is considered the headers. if there are not two blank lines anywhere in the response then the whole thing defaults to the body. In this challenge the two prints would not be necesary, but I do it to be safe.</p>
+<p><code>from = cgi.FieldStorage()</code> gets the form, so that I can read the submitted post data.</p>
+<p>The try catch statement allows the page to work weather there was a username and password posted or not</p>
+<p>The first if statement checks if the database has been created yet or not. If it hasn't it uses sqlite3 to create it.</p>
+<p>The rest connects to the sqlite3 database, and checks the username and password. Then returns the win token if a value is returned from the database.</p>
+<p>The final bit prints the form to log in using.</p>
+</div>
+</div>
+{% endblock %}

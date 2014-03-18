@@ -1,0 +1,30 @@
+#include <tunables/global>
+
+{SERVER_ROOT}app/** {
+    #include <abstractions/base>
+    #include <abstractions/python>
+    #include <abstractions/nameservice>
+    #include <abstractions/user-tmp>
+    
+    capability setuid,
+    capability setgid,
+
+    {SERVER_ROOT}app/** rwix,
+    {SERVER_ROOT}sand/** rwPx,
+    /etc/mime.types r,
+    /etc/apt/apt.conf.d/* r,
+    /etc/apt/apt.conf.d/ r,
+    /etc/default/apport r,
+    /etc/apparmor.d/* w,
+    /sbin/apparmor_parser Ux,
+    /bin/dash ix,
+    /proc/** r,
+    /etc/apport/** r,
+    /run/shm/** lrw,
+    /etc/ssl/openssl.cnf r,
+
+    /sbin/ldconfig ix,
+    /usr/bin/gcc-4.6 ix,
+    /sbin/ldconfig ix,
+    /usr/bin/openssl ix,    
+}

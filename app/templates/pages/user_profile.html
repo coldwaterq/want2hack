@@ -1,0 +1,75 @@
+{% extends "../design/site.html" %}
+{% block head %}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#table').dataTable({
+                        "bJQueryUI": true
+                });
+			tables = $('#table_wrapper');
+			for( var t=0; t<tables.length; t++){
+				tables[t].setAttribute('class','pure-u-1');
+			}
+		} );
+	</script>
+{% endblock %}
+{% block content %}
+<h1>{{user_prof['username']}}</h1>
+<div class="pure-u-1-2">
+	<img src="http://www.gravatar.com/avatar/{{user_prof['gravatar']}}?d=identicon&s=200"/>
+	<p>Breaking Points: {{user_prof['attack_points']}}</p>
+	<p>Building Points: {{user_prof['challenge_points']}}</p>
+	{% if challenges %}
+		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal" >
+			<caption>Challenges Built</caption>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Approved Version</th>
+					<th>Points</th>
+				</tr>
+			</thead>
+			
+			
+			<tbody>
+				{% for challenge in challenges %}
+					<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" {% if( challenges.index(challenge) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<td>{{challenge['challenge_name']}}</td>
+						<td>{{challenge['latest_approved_version']}}</td>
+						<td>{{challenge['difficulty']}}{% if challenge['difficulty']==0 %}*{% endif %}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<h5>* The challenge has not been completed yet</h5>
+	{% else %}
+		<p>Nothing made to show off yet.</p>
+	{% endif %}
+</div>
+<div class="pure-u-11-24">
+	{% if attacks %}
+		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal" >
+			<caption>Wins</caption>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Version Defeated</th>
+					<th>Points Recieved</th>
+				</tr>
+			</thead>
+			
+			
+			<tbody>
+				{% for attack in attacks %}
+					<tr onclick="document.location='/dashboard/challenge/{{attack['challenge_id']}}';" {% if( attacks.index(attack) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<td>{{attack['challenge_name']}}</td>
+						<td>{{attack['version_attacked']}}</td>
+						<td>{{attack['user_points_received']}}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p>No wins under the belt yet</p>
+	{% endif %}
+</div>
+{% endblock %}

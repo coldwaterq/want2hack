@@ -1,0 +1,9 @@
+Organization
+* errors - Error pages
+* injects - Things that are used regularly like the leaderboard, should be pulled out and placed in their own template which can be injected, these are stored here
+* pages - The main pages
+* design - pieces used everywhere for design perposes, like the site template
+
+If you have a better way that makes more sense, I am all ears.
+
+If you don't know where to look, try to start with pages

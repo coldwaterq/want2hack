@@ -1,0 +1,44 @@
+<div class="pure-menu pure-menu-open" id="menu">
+	{% if not g.user %}
+	<a class="pure-menu-heading" href="//{{config["SERVER_NAME"]}}">{{config["SERVER_NAME"]}}</a>
+	<ul>
+		<form class="pure-form " action="/user/signin" method="POST">
+			<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+			<li><input class="pure-input pure-u-1" type="text" placeholder="username" name="username"/></li>
+			<li><input class="pure-input pure-u-1" type="password" autocomplete="off" placeholder="password" name="password"/></li>
+			<li><input type="submit" class="pure-button pure-u-1" value="Sign In"/></li>
+		</form>
+		<li ><p></li>
+		<li {% if request.endpoint == 'home'%}class="pure-menu-selected"{% endif %}><a href="/">Home</a></li>
+		<li {% if request.endpoint == 'user_signup'%}class="pure-menu-selected"{% endif %}><a href="/user/signup">Sign Up</a></li>
+		<li class="pure-menu-heading">Information</li>
+		<li {% if request.endpoint == 'scoreboard'%}class="pure-menu-selected"{% endif %}><a href="/scoreboard">Leaderboard</a></li>
+		<li {% if request.endpoint == 'hof'%}class="pure-menu-selected"{% endif %}><a href="/hof">Hall of Fame</a></li>
+		<li {% if request.endpoint == 'about'%}class="pure-menu-selected"{% endif %}><a href="/about">About</a></li>
+		<li {% if request.endpoint == 'contact'%}class="pure-menu-selected"{% endif %}><a href="/contact">Contact Us</a></li>
+		<li {% if request.endpoint == 'blog'%}class="pure-menu-selected"{% endif %}><a href="/blog">Blog</a></li>
+		<li class="pure-menu-heading">Administration</li>
+		<li><a href="https://github.com/coldwaterq/want2hack/issues/new?title=User%20Found%20Bug:&body=Problem:%0aDescription:%0aLocation:%0aOther%20Comments:">Report Bug</a></li>
+	</ul>
+	{% else %}
+	<a class="pure-menu-heading" href="/user">{{g.user['username']}}</a>
+	<ul>
+        <li {% if request.endpoint == 'dashboard'%}class="pure-menu-selected"{% endif %}><a href="/">Dashboard</a></li>
+		<li {% if request.endpoint == 'challenges'%}class="pure-menu-selected"{% endif %}><a href="/challenges">Challenges</a></li>		
+		<li class="pure-menu-heading">Information</li>
+		<li {% if request.endpoint == 'scoreboard'%}class="pure-menu-selected"{% endif %}><a href="/scoreboard">Leaderboard</a></li>
+		<li {% if request.endpoint == 'hof'%}class="pure-menu-selected"{% endif %}><a href="/hof">Hall of Fame</a></li>
+		<li {% if request.endpoint == 'about'%}class="pure-menu-selected"{% endif %}><a href="/about">About</a></li>
+		<li {% if request.endpoint == 'contact'%}class="pure-menu-selected"{% endif %}><a href="/contact">Contact Us</a></li>
+		<li {% if request.endpoint == 'blog'%}class="pure-menu-selected"{% endif %}><a href="/blog">Blog</a></li>
+		<li class="pure-menu-heading">Administration</li>
+		<li {% if request.endpoint == 'user_profile'%}class="pure-menu-selected"{% endif %}><a href="/user">Settings</a></li>
+		{% if g.user['username'] in config['ADMIN_USERS'] %}
+			<li {% if request.endpoint == 'admin'%}class="pure-menu-selected"{% endif %}><a href="/admin">Admin</a></li>
+		{% endif %}
+        <li><a href="/user/signout">Sign Out</a></li>
+		<li><a href="https://github.com/coldwaterq/want2hack/issues/new?title=User%20Found%20Bug:&body=Problem:%0aDescription:%0aLocation:%0aOther%20Comments:">Report Bug</a></li>
+	</ul>
+	{% endif %}
+</div>
+

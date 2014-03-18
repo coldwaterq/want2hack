@@ -1,0 +1,20 @@
+{% extends "../design/site.html" %}
+{% block head %}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#table').dataTable({
+                        "bJQueryUI": true
+                });
+			tables = $('#table_wrapper');
+			for( var t=0; t<tables.length; t++){
+				tables[t].setAttribute('class','pure-u-1');
+			}
+		} );
+	</script>
+{% endblock %}
+{% block content %}
+<div style="margin:auto;display:block;" class="pure-u-1-3">
+	<h1 style="margin-top:0">Leaderboard</h1>
+	{% include "../injects/_leaderboard.html" %}
+</div>
+{% endblock %}

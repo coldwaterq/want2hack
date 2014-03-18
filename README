@@ -1,0 +1,141 @@
+List of dependencies (install with apt-get)
+python-flask
+postgresql
+python-psycopg2
+postgresql-plpython3
+bind9
+apparmor-utils
+python-pip
+
+sudo apt-get install python-flask postgresql python-psycopg2 postgresql-plpython3 bind9 apparmor-utils pip
+
+List of dependencies (install with pip)
+Flask-Mail
+
+sudo pip install Flask-Mail
+
+###### Setting up local instance for testing ########
+inorder to start your server on your machine you must edit /etc/hosts file and add
+
+127.0.0.1   testing.com
+127.0.0.1   u1.testing.com
+127.0.0.1   u2.testing.com
+
+If you need any more subdomains you must say them in this file, wildcards do not exist :(
+
+create config file located in base
+
+start the server
+
+##### Setting up server ################################
+
+/etc/bind/named.conf.local(indentation for reading)
+    //
+    // Do any local configuration here
+    //
+
+    // Consider adding the 1918 zones here, if they are not used in your
+    // organization
+    //include "/etc/bind/zones.rfc1918";
+
+    zone "want2hack.com" {
+            type master;
+            file "/etc/bind/db.want2hack.com";
+    };
+
+    zone "infsek.tk" {
+        type master;
+        file "/etc/bind/db.infsek.tk";
+    };
+
+/etc/bind/db.want2hack.com (indentation for reading)
+    ;
+    ; BIND reverse data file for infsek.tk
+    ;
+    $TTL    604800
+    @   IN  SOA ns.want2hack.com. root.want2hack.com. (
+                   7777     ; Serial
+                 604800     ; Refresh
+                  86400     ; Retry
+                2419200     ; Expire
+                 604800 )   ; Negative Cache TTL
+    ;
+    @   IN  NS  ns.want2hack.com.
+    ns  IN  A   50.112.109.159
+    want2hack.com.  IN  A   50.112.109.159
+
+    *   IN  A   50.112.109.159
+
+
+do this to set up postgresql database
+$ sudo passwd postgres
+>> {choose a password for postgres}
+$ su postgres
+>> {postgres password}
+
+postgres$ psql
+psql> \i config.sql
+psql> ALTER USER infsek PASSWORD '{choose a infsek password, different from postgres}'
+psql> \q
+postgres$ exit
+The ALTER USER should not be needed but it was an easy quick fix for now to keep people from all using the same password
+
+$ createlang plpython3u infsek -U infsek -h localhost -W
+>> {infsek password}
+
+$ psql infsek -U infsek -h localhost -W
+>> {infsek password}
+psql> \i local_install.sql
+psql> \q
+
+Run sudo server.py, this will make your config, and setup the apparmor profile.
+
+Once your config is set server.py will also start the server
+
+If you want to make it service (only do this if you know what that means)
+make file /etc/init.d/infsek and put the following in it
+
+#! /bin/sh
+# /etc/init.d/infsek
+ 
+case "$1" in
+  start)
+    echo "Starting want2hack$2"
+    # run application you want to start
+    # make that the correct path for http.start and https.start
+    cd /var/www/infsek/app/
+    echo "Type the password for the server files, followed by [ENTER]:"
+    read password
+    echo $password | /var/www/infsek/app/server.py &
+    echo $password | /var/www/infsek/app/server_secure.py &
+    ;;
+  stop)
+    echo "Stopping want2hack"
+    # kill application you want to stop
+    killall server.py
+    killall server_secure.py
+    ;;
+  restart)
+    /etc/init.d/infsek stop
+    /etc/init.d/infsek start $2
+    ;;
+  *)
+    echo "Usage: /etc/init.d/infsek {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+
+run "sudo chmod a+x /etc/init.d/infsek"
+then run "sudo update-rc.d -f infsek defaults"
+
+fill out config file which is in base +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+sudo service infsek start
+
+Backup
+
+pg_dump -U infsek -h localhost -W > dbbackup
+scp to computer
+delete from server ------This is very important--------
+

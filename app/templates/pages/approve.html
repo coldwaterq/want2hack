@@ -1,0 +1,60 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<script type="text/javascript">
+function plain_text(name){
+	content = $("#c"+name).val();
+	$("#content").val(content);
+	$("#content").attr('style','');
+	$("#web").attr('style','visibility:hidden;position:absolute;')
+}
+function web_view(name){
+	content = $("#c"+name).val();
+	iframe = $("#web");
+	var doc = iframe[0].contentWindow.document;
+	var body = $('body',doc);
+	body.html(content);
+	$("#content").attr('style','visibility:hidden;position:absolute;');
+	$("#web").attr('style','')
+}
+
+</script>
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-12">
+	<div class="pure-u-1">
+		<form method="POST" action="/approve/{{challenge['challenge_id']}}">
+			<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+			<input class="pure-u-1 pure-button pure-button-primary" value="Approve {{challenge['challenge_name']}}" type="submit"/>
+		</form>
+		<div class="pure-u-1"></div>
+		<form method="POST" action="/deny/{{challenge['challenge_id']}}">
+			<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+			<input class="pure-u-1 pure-button pure-button-primary" value="Deny {{challenge['challenge_name']}}" type="submit" style="background: rgb(235, 10, 10);"/>
+		</form>
+	</div>
+</div>
+<p id="space" class="pure-u-1"></p>
+<div class="pure-u-1-2 edit" style="margin-right:1em;margin-left:1em;">
+	<h3 id="space" class="pure-u-1">Files</h3>
+	{% if not files %}
+		<p>This challenge has no files, so I recomend that it not be approved</p>
+	{% else %}
+		<table class="pure-table pure-table-horizontal">
+			<tbody>
+				{% for file in files %}
+					<tr {% if( files.index(file) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<td>{{file[0]}}</td>
+						<td><button type="submit" class="pure-button pure-u-1" onclick="plain_text('{{file[2]}}');" ><i class="icon-edit icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Plain Text</span></button></td>
+						<td><button type="submit" class="pure-button pure-u-1" onclick="web_view('{{file[2]}}');" ><i class="icon-edit icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Web View</span></button></td>
+						<input type="hidden" id="c{{file[2]}}" value="{{file[1]}}"/>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>
+
+<div class="pure-u-1-2 edit">
+        <textarea id="content" class="pure-u-1" rows=20 style="visibility:hidden;position:absolute;" ></textarea>
+        <iframe id="web" class="pure-u-1" style="visibility:hidden;position:absolute;"></iframe>
+</div>
+{% endblock %}

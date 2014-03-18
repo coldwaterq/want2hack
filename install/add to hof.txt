@@ -1,0 +1,15 @@
+# This is currently how you add users to the HOF, there is not another way as of yet.
+
+INSERT into infsek.hof(user_id,user_points_received,description) VALUES(1,10,'For being so damn awsome');
+
+UPDATE infsek.account a
+SET attack_points = (COALESCE(
+		(SELECT SUM(user_points_received)
+		FROM infsek.sandbox
+		WHERE attacker_id= a.user_id
+		and complete='t'),0)
+		+
+		COALESCE((SELECT SUM(h.user_points_received)
+		FROM infsek.hof h
+		WHERE h.user_id = a.user_id),0)
+	);

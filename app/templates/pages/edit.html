@@ -1,0 +1,162 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<script type="text/javascript">
+var editting=false;
+var saving=false;
+var csrf="{{g.csrf}}"
+var classes = ['icon-chevron-right icon-large','icon-chevron-up icon-large','icon-chevron-left icon-large','icon-chevron-down icon-large']
+function edit(name){
+	if(!editting && !saving){
+		content = $("#c"+name).val();
+		$("#content").val(content);
+		$("#other").attr('style','visibility:hidden;position:absolute;');
+		$("#two").attr('style','visibility:hidden;position:absolute;');
+		$("#content").attr('style','');
+		$("#explain").attr('style','');
+		button = $("#e"+name);
+		button.children()[1].innerHTML='Save';
+		button.children()[0].setAttribute('class','icon-save icon-large');
+		button.attr('onclick','save("'+name+'");');
+		editting=true;
+	}
+	else if(saving){
+		alert("The file is still saving, there may be a problem with your network connection, or your csrf token my be corrupt.")
+	}
+	else{
+		alert('Save before you edit something else');
+	}
+}
+saving=false;
+function save(name){
+        content = $("#content").val();
+	$("#c"+name).val(content);
+	$("#content").val("");
+	$('#content').attr('style','visibility:hidden');
+	$('#explain').attr('style','visibility:hidden');
+	$('#other').attr('style','');
+	$('#two').attr('style','');
+        button = $("#e"+name);
+	button.children()[1].innerHTML='Saving';
+	button.children()[0].setAttribute('class','icon-truck icon-large');
+        button.attr('onclick','edit("'+name+'");');
+	saving=true;
+	jQuery.post("/dashboard/challenge/update_file/{{challenge['challenge_id']}}",{"content":content,"name_id":name,"_csrf_token":csrf}, function( data){
+		csrf=data;
+		button = $("#e"+name);
+		button.children()[1].innerHTML='Edit';
+		button.children()[0].setAttribute('class','icon-edit icon-large');
+		$("#csrf1").val(csrf);
+		$("#csrf2").val(csrf);
+		$("#csrf3").val(csrf);
+		saving=false;
+	});
+	editting=false;
+}
+
+</script>
+<div class="pure-u-1-24"></div>
+<div class="pure-u-11-12">
+	<div class="pure-u-1">
+		<p class="pure-u-1"><b>Status:</b>
+			{% if challenge['latest_version'] == 1 %}
+				This challenge has not been published yet
+			{% elif not challenge['latest_published_version'] %}
+				This challenge was not approved
+			{% elif challenge['latest_published_version'] != challenge['latest_approved_version'] %}
+				This challenge is awaiting approval for version {{challenge['latest_published_version']}}
+			{% elif challenge['latest_published_version']!=challenge['latest_version']-1 %}
+				Version {{challenge['latest_version']-1}} was not approved but Version {{challenge['latest_approved_version'] }} is still public
+			{% elif challenge['latest_published_version']==challenge['latest_version']-1 %}
+				Version {{challenge['latest_approved_version']}} is public
+			{% endif %}
+		</p>
+		<label>win token: return this value to signify the user has won<input class="pure-u-1" value="{{challenge['flag_seed']}}" readonly="readonly"/></label>
+		{% if attack %}
+			<a href="/challenge/restart/{{attack['challenge_id']}}"><button class="pure-u-1-3 pure-button"><i class="icon-repeat icon-large"></i><span >Restart</span></button></a>
+			{% if not attack['is_latest_version'] %}
+				<a href="/dashboard/attack/update/{{attack['challenge_id']}}" ><button class="pure-u-7-24 pure-button"><i class="icon-chevron-sign-up icon-large"></i><span >Update</span></button></a>
+			{% else %}
+				<a href="/challenge/landing/{{attack['challenge_id']}}" ><button class="pure-u-7-24 pure-button"><i class="icon-gamepad icon-large"></i><span>Attack!</span></button></a>
+			{% endif %}
+			<a href="/dashboard/attack/forfeit/{{attack['challenge_id']}}"><button class="pure-u-1-3 pure-button"><i class="icon-flag-alt icon-large"></i><span>Give up</span></button></a>
+		{% else %}
+			<a  href="/challenge/checkout/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button pure-button-primary">Start testing {{challenge['challenge_name']}}</button></a>
+		{% endif %}
+	</div>
+</div>
+<p id="space" class="pure-u-1"></p>
+<div class="pure-u-1-2 edit" style="margin-right:1em;margin-left:1em;">
+	<h3 id="space" class="pure-u-1">Files</h3>
+	{% if not files %}
+		<p>You don't have any files, you should prbably make one. If you don't know how to start check out the <a href='/blog'>blog</a>.</p>
+	{% else %}
+		<table class="pure-table pure-table-horizontal">
+			<tbody>
+				{% for file in files %}
+					<tr {% if( files.index(file) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<td>{{file[0]}}</td>
+						{% if file[3] %}
+							<td><button type="submit" id="e{{file[2]}}" class="pure-button pure-u-1" onclick="edit('{{file[2]}}');" ><i class="icon-edit icon-large"></i><span>Edit</span></button></td>
+							<input type="hidden" id="c{{file[2]}}" value="{{file[1]}}"/>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<form action="/dashboard/challenge/remove_file/{{challenge['challenge_id']}}" method="POST"> 
+							<td>
+								<button type="submit" class="pure-button" ><i class="icon-trash icon-large"></i><span>Delete</span></button>
+							</td>
+							<input type="hidden" name="name_id" value="{{file[2]}}"/>
+							<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+						</form>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>
+<div id="other" class="pure-u-1-4 edit">
+	<h3>Create a file or folder</h3>
+	<form class="pure-form" action="/dashboard/challenge/add_file/{{challenge['challenge_id']}}" method="POST">
+		<input id="csrf2" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+        	<input placeholder="foldername" name="foldername" class="pure-input pure-u-11-24"/>
+		<input placeholder="filename" name="filename" class="pure-input pure-u-11-24"/>
+        	<button type="submit" class="pure-button pure-u-23-24" ><i class="icon-plus icon-large"></i><span>Add</span></button>
+	</form>
+</div>
+<div id="two" class="pure-u-1-4 edit">
+	<h3>Settings</h3>
+	<form class="pure-form pure-form-stacked" action="/dashboard/challenge/{{challenge['challenge_id']}}" method="POST">
+		<input id="csrf3" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+		<fieldset>
+		        <label for="name">Name:</label>
+			<input class="pure-u-1" id="name" name="name" value="{{challenge['challenge_name']}}"/>
+			<label for="d" class="pure-u-1">Difficulty:</label>
+			<select id="d"class="pure-u-1" name="difficulty" >
+				<option value = 1 {% if difficulty == 1 %}selected="selected"{% endif %}>Script Kiddy</option>
+				<option value = 2 {% if difficulty == 2 %}selected="selected"{% endif %}>Easy</option>
+				<option value = 3 {% if difficulty == 3 %}selected="selected"{% endif %}>Medium</option>
+				<option value = 4 {% if difficulty == 4 %}selected{% endif %}>Hard</option>
+				<option value = 5 {% if difficulty == 5 %}selected="selected"{% endif %}>1337</option>
+			</select>
+			<label for="des" class="pure-u-1">Description:</label>
+			<textarea name="description" id="des" clas="pure-u-1">{{challenge['description']}}</textarea>
+			<input class="pure-u-1 pure-button" type="submit" value="Update" />
+		</fieldset>
+	</form>
+	<form class="pure-form" action="/dashboard/challenge/{{challenge['challenge_id']}}" method="post">
+		<input class="pure-u-1 pure-button pure-button-primary" type="submit" value="Publish" />   
+		<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+		<input type="hidden" name="publish" value="t"/>
+	</form>     
+	<label for="v1" class="pure-u-1">Current Version:</label>
+	<input id="v1" class="pure-u-1" name="version" value="{{challenge['latest_version']}}" disabled />
+	<label for="v2" class="pure-u-1">Published Version:</label>
+	<input id="v2" class="pure-u-1" name="version" value="{{challenge['latest_published_version']}}" disabled />
+	<label for="v3" class="pure-u-1">Published and Approved Version:</label>
+	<input id="v3" class="pure-u-1" name="version" value="{{challenge['latest_approved_version']}}" disabled />
+</div>
+<div class="pure-u-1-2 edit">
+        <p id='explain' style="visibility:hidden;">The first line should be "#!/usr/bin/php-cgi" for php or "#!/usr/bin/python" for python. don't start with #! if you want plain text like html returned. If you need some help check out the <a href='/blog'>blog</a></p> 
+        <textarea id="content" class="pure-u-1" rows=20 style="visibility:hidden;" ></textarea>
+</div>
+{% endblock %}

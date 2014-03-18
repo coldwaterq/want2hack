@@ -1,0 +1,50 @@
+/* I don't believe this is used, commenting out to see if anything breaks before removal
+
+I don't know if these comments work in css, but I am doing it anyway.
+
+#content {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#room {
+    background-color: #ddd;
+    margin-bottom: 1em;
+}
+
+#messages {
+    width: 680px;
+    height: 300px;
+    overflow: auto;
+    background-color: #eee;
+    margin-bottom: 1em;
+    margin-right: 10px;
+}
+
+#room-list {
+    float: right;
+    width: 100px;
+    height: 300px;
+    overflow: auto;
+}
+
+#room-list div {
+    border-bottom: 1px solid #eee;
+}
+
+#room-list div:hover {
+    background-color: #ddd;
+}
+
+#send-message {
+    width: 700px;
+    margin-bottom: 1em;
+    margin-right: 1em;
+}
+
+#help {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+*/

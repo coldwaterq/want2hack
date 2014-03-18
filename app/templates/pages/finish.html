@@ -1,0 +1,18 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<div style="margin:auto;display:block;" class="pure-u-11-24">
+	<h2 class="pure-u-1">Congratulations you have completed this challenge</h2>
+	<p class="pure-u-1"> How difficult would you say it was, you will get the points after you vote.</p>
+	<form class="pure-form pure-u-1" method="POST">
+		<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+		<select name="rating" >
+			<option value = 1 {% if difficulty == 1 %}selected="selected"{% endif %}>Script Kiddy</option>
+			<option value = 2 {% if difficulty == 2 %}selected="selected"{% endif %}>Easy</option>
+			<option value = 3 {% if difficulty == 3 %}selected="selected"{% endif %}>Medium</option>
+			<option value = 4 {% if difficulty == 4 %}selected="selected"{% endif %}>Hard</option>
+			<option value = 5 {% if difficulty == 5 %}selected="selected"{% endif %}>1337</option>
+		</select>
+		<input class="pure-button" type=submit value="Submit"/>
+	</form>
+</div>
+{% endblock %}

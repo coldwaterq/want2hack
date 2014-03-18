@@ -1,0 +1,31 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<div class="pure-u-23-24" style="margin-right:1em;margin-left:1em;">
+	<h3 id="space" class="pure-u-1">Add someone to the Hall of Fame</h3>
+	<form method="POST" action="/admin/addhof">
+		<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
+		<input class="pure-u-1 pure-input" name="description" placeholder="description"/>
+		<input class="pure-u-1 pure-input" name="points" placeholder="points"/>
+		<input class="pure-u-1 pure-input" name="user_id"placeholder="user_id"/>
+		<input value="Add" class="pure-u-1 pure-button" type="submit"/>
+	</form>
+</div>
+<div class="pure-u-23-24" style="margin-right:1em;margin-left:1em;">
+	<h3 id="space" class="pure-u-1">Challenges Awaiting Approval</h3>
+	{% if not approvals %}
+		<p>All of the challenges have been reviewed.</a>.</p>
+	{% else %}
+		<table class="pure-table pure-table-horizontal">
+			<tbody>
+				{% for challenge in approvals %}
+					<tr {% if( approvals.index(challenge) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<td>{{challenge['challenge_name']}}</td>
+						<td>{{challenge['owner_id']}}</td>
+						<td><a class="pure-button" href="/approve/{{challenge['challenge_id']}}">Review<a/></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+</div>
+{% endblock %}

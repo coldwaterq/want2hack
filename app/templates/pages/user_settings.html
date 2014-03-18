@@ -1,0 +1,11 @@
+{% extends "../design/site.html" %}
+{% block content %}
+<div>
+	<h1>User Settings Page</h1>
+	<a href="/user/{{g.user['username']}}"><button class="pure-button">View My Profile</button></a>
+	<p></p>
+	<a href="/user/reset"><button class="pure-button">Change my Password</button></a>
+	<p></p>
+	<a href="//gravatar.com/"><button class="pure-button">Edit Profile Picture at Gravatar</button></a>
+</div>
+{% endblock %}

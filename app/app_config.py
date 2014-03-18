@@ -45,7 +45,8 @@ defaults = {'DEBUG':True,
     'MAIL_DEFAULT_SENDER_NAME':"Want2Hack",
     'ADMIN_USERS':[],
     'KEY_DIR':'/etc/ssl/certs',
-    'CHALLENGE_TIMEOUT':3
+    'CHALLENGE_TIMEOUT':3,
+    'LOGGING_TO_ADDR':'NoOne'
     }
 conf = ConfigParser.SafeConfigParser(defaults)
 conf.read('/etc/want2hack.conf')
@@ -87,10 +88,20 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     
 # This catches all error messages on the server and logs them to the file erros.log
 from logging import FileHandler
+from logging.handlers import SMTPHandler
 import logging
 fhandler = FileHandler('/var/log/want2hack.log', mode='a')
 fhandler.setLevel(logging.INFO)
 app.logger.addHandler(fhandler)
+if(app.config['LOGGING_TO_ADDR'] != None and app.config['LOGGING_TO_ADDR'] != 'NoOne'):
+    emailhandler = SMTPHandler((app.config['MAIL_SERVER'],app.config['MAIL_PORT']),
+        app.config['MAIL_USERNAME'],
+        [app.config['LOGGING_TO_ADDR']],
+        'Want2Hacke Error',
+        (app.config['MAIL_USERNAME'],app.config['MAIL_PASSWORD']),
+        ())
+    emailhandler.setLevel(logging.WARNING)
+    app.logger.addHandler(emailhandler)
 
 print("The current root of the server is "+app.config['SERVER_ROOT'])
 print("SERVER_NAME: "+app.config['SERVER_NAME'])

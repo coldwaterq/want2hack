@@ -263,7 +263,7 @@ class DatabaseManager :
                 user = sql.fetchone()
             # only username provided
             elif username is not None :
-                sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points FROM infsek.account WHERE username = %s LIMIT 1;", [username])
+                sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points, email FROM infsek.account WHERE username = %s LIMIT 1;", [username])
                 user = sql.fetchone()
             # return None
             else :

@@ -325,6 +325,19 @@ def singal_challenge(challenge_id):
 			if(db_man.publish(challenge_id=challenge_id, latest_version=challenge['latest_version'], difficulty_estimate=difficulty_estimate)):
 				file_man.publish(challenge_id=challenge_id)
 				flash('The challenge has been submitted for approval, you are now working on the new one.')
+				msg = Message("Challenge Awaiting Approval")
+				msg.recipients = []
+				for user in app.config['ADMIN_USERS']:
+					email = db_man.get_user(username=user)['email']
+					msg.recipients.append(email)
+				msg.html =  '''
+							A challenge is awaiting approval on %s.
+							''' % (app.config['SERVER_NAME'])
+				try:
+					app.config['MAIL'].send(msg)
+				except Exception, e:
+					app.logger.warning('The "challenge is awaiting approval" message was not sent because of ' + e)
+
 		else:
 			name = request.form['name']
 			difficulty=int(request.form['difficulty'])

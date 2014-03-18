@@ -12,7 +12,6 @@ import md5
 import app_routes
 import traceback
 from flask_mail import Mail
-from SimpleAES import SimpleAES
 import logging
 import ConfigParser
 

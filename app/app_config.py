@@ -71,7 +71,7 @@ if( conf.get('DEFAULT','DB_PASSWORD') == 'Set This'):
 for name in defaults.keys():
     app.config[name] = conf.get('DEFAULT', name)
     print name
-app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME',
+app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     app.config['MAIL_USERNAME'])
     
 # This catches all error messages on the server and logs them to the file erros.log

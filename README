@@ -6,8 +6,9 @@ postgresql-plpython3
 bind9
 apparmor-utils
 python-pip
+python-tornado
 
-sudo apt-get install python-flask postgresql python-psycopg2 postgresql-plpython3 bind9 apparmor-utils pip
+sudo apt-get install python-flask postgresql python-psycopg2 postgresql-plpython3 bind9 apparmor-utils pip python-tornado
 
 List of dependencies (install with pip)
 Flask-Mail
@@ -66,7 +67,7 @@ start the server
 
     *   IN  A   50.112.109.159
 
-
+do this in the install directory
 do this to set up postgresql database
 $ sudo passwd postgres
 >> {choose a password for postgres}
@@ -75,7 +76,7 @@ $ su postgres
 
 postgres$ psql
 psql> \i config.sql
-psql> ALTER USER infsek PASSWORD '{choose a infsek password, different from postgres}'
+psql> ALTER USER infsek PASSWORD '{choose a infsek password, different from postgres}';
 psql> \q
 postgres$ exit
 The ALTER USER should not be needed but it was an easy quick fix for now to keep people from all using the same password
@@ -85,10 +86,10 @@ $ createlang plpython3u infsek -U infsek -h localhost -W
 
 $ psql infsek -U infsek -h localhost -W
 >> {infsek password}
-psql> \i local_install.sql
+psql> \i install.sql
 psql> \q
 
-Run sudo server.py, this will make your config, and setup the apparmor profile.
+Run sudo server.py in the app directory, this will make your config, and setup the apparmor profile.
 
 Once your config is set server.py will also start the server
 

@@ -30,7 +30,7 @@ app.config['EMAIL_REGEX'] = '^[a-zA-Z0-9+_.\-]*@[a-zA-Z0-9+_.\-]*$'
 
 # Configurable Configuration, use the configuration file
 defaults = {'DEBUG':True,
-    'SESSION_COOKIE_SECURE' = False,
+    'SESSION_COOKIE_SECURE': False,
     'SERVER_ROOT':'Set This',
     'SERVER_NAME':'testing.test',
     'SERVER_ADDR':'127.0.0.1',

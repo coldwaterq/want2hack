@@ -72,7 +72,8 @@ CREATE TABLE want2hack.hof (
 
 CREATE TABLE want2hack.sandbox_note (
 	note_id SERIAL PRIMARY KEY NOT NULL,
-	sandbox_id INT REFERENCES want2hack.sandbox(sandbox_id) NOT NULL,
+	challenge_id INT REFERENCES want2hack.challenge(challenge_id) NOT NULL,
+	attacker_id INT REFERENCES want2hack.account(user_id),
 	description VARCHAR(500)
 );
 

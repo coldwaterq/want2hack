@@ -90,11 +90,11 @@ function save(name){
 	{% if not files %}
 		<p>You don't have any files, you should prbably make one. If you don't know how to start check out the <a href='/blog'>blog</a>.</p>
 	{% else %}
-		<table class="pure-table pure-table-horizontal">
+		<table class="pure-table pure-table-horizontal" >
 			<tbody>
 				{% for file in files %}
 					<tr {% if( files.index(file) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
-						<td>{{file[0]}}</td>
+						<td style="max-width:150px; word-wrap: break-word;">{{file[0]}}</td>
 						{% if file[3] %}
 							<td><button type="submit" id="e{{file[2]}}" class="pure-button pure-u-1" onclick="edit('{{file[2]}}');" ><i class="icon-edit icon-large"></i><span>Edit</span></button></td>
 							<input type="hidden" id="c{{file[2]}}" value="{{file[1]}}"/>

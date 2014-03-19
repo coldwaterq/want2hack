@@ -1,0 +1,26 @@
+#! /bin/sh
+# /etc/init.d/want2hack
+ 
+case "$1" in
+  start)
+    echo "Starting want2hack"
+    # run application you want to start
+    cd {SERVER_ROOT}/app/
+    {SERVER_ROOT}/app/server.py &
+    {SERVER_ROOT}/app/server_secure.py &
+    ;;
+  stop)
+    echo "Stopping want2hack"
+    # kill application you want to stop
+    killall server.py
+    killall server_secure.py
+    ;;
+  restart)
+    /etc/init.d/want2hack stop
+    /etc/init.d/want2hack start
+    ;;
+  *)
+    echo "Usage: /etc/init.d/want2hack {start|stop|restart}"
+    exit 1
+    ;;
+esac

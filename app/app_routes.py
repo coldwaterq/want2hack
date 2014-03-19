@@ -723,7 +723,7 @@ def deny(challenge_id):
 @app.errorhandler(403)
 def access_denied(e):
 	return render_template('errors/403.html'), 403
-	
+
 # handles 404 errors
 @app.errorhandler(404)
 def page_not_found(e):

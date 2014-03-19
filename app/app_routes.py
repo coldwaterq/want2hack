@@ -780,7 +780,11 @@ def before_request() :
 	except KeyError, e :
 		g.user = None
 	if(request.method=='POST' and request.host==app.config['SERVER_NAME']):
-		token = session['_csrf_token']
+		try:
+			token = session['_csrf_token']
+		except:
+			flash('There was a problem with your session state, it should be resolved now.')
+			return redirect('/')
 		session['_csrf_token'] = None
 		if not token or token != request.form.get('_csrf_token'):
 			flash('You were just protected from CSRF, if this was in ERROR, Sorry.')

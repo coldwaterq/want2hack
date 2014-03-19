@@ -16,7 +16,9 @@
 <h1>{{challenge['challenge_name']}}</h1>
 <div class="pure-u-1-2">
 	<p>{{challenge['description']}}</p>
-	{% if not attack %}
+	{% if challenge['owner_id'] == g.user['user_id'] %}
+		<a href="/dashboard/challenge/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button pure-button-primary">Test/Develop {{challenge['challenge_name']}}</button></a>
+	{% elif not attack %}
 		<a  href="/challenge/checkout/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button pure-button-primary">Start {{challenge['challenge_name']}}</button></a>
 	{% elif attack['complete'] %}
 		<p>You have completed this challenge and recieved {{attack['user_points_received']}} points.</p>

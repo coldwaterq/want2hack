@@ -83,7 +83,11 @@ function save(name){
 			<a  href="/challenge/checkout/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button pure-button-primary">Start testing {{challenge['challenge_name']}}</button></a>
 		{% endif %}
 	</div>
+	<div class="pure-u-1" style="margin-top:3px;">
+		<a  href="/dashboard/challenge/{{challenge['challenge_id']}}/profile"><button class="pure-u-1 pure-button pure-button-primary">View  profile</button></a>
+	</div>
 </div>
+
 <p id="space" class="pure-u-1"></p>
 <div class="pure-u-1-2 edit" style="margin-right:1em;margin-left:1em;">
 	<h3 id="space" class="pure-u-1">Files</h3>

@@ -296,6 +296,26 @@ def dashboard():
 	attacked_challenges = db_man.get_attacks(user_id=g.user['user_id'])
 	return render_template('pages/dashboard.html', challenges=challenges, attacked=attacked_challenges)
 
+# Shows information about a challenge
+@app.route('/dashboard/challenge/<int:challenge_id>/profile')
+@require_user
+def challenge_profile(challenge_id):
+	challenge = db_man.get_challenge(challenge_id=challenge_id)
+	try:
+		attack = db_man.get_attacks(user_id=g.user['user_id'], challenge_id=challenge_id)[0]
+	except:
+		attack = None
+	try:
+		if challenge['owner_id']!=g.user['user_id'] and challenge['latest_published_version'] is None:
+			flash('That is not something you are allowed to do.')
+			return redirect('/dashboard')	
+		attackers = db_man.get_attackers(challenge_id=challenge_id)		
+		return render_template('pages/challenge.html', challenge=challenge, attack=attack, attackers=attackers)
+	except Exception, e:
+		print e
+		flash('That is not something you are allowed to do.')
+		return redirect('/dashboard')
+
 # If you are the owner of the challenge, you can edit it
 # if you are not you see a challenge profile for the challenge
 @app.route('/dashboard/challenge/<int:challenge_id>', methods=['POST','GET']) # overview of files and directorys of challenge
@@ -303,20 +323,17 @@ def dashboard():
 def singal_challenge(challenge_id):
 	challenge = db_man.get_challenge(challenge_id=challenge_id)
 	try:
-		attack = db_man.get_attacks(user_id=g.user['user_id'], challenge_id=challenge_id)[0]
-	except:
-		attack = None
-	try:
 		if challenge['owner_id']!=g.user['user_id'] :
-			if challenge['latest_published_version'] is None:
-				flash('That is not something you are allowed to do.')
-				return redirect('/dashboard')	
-			attackers = db_man.get_attackers(challenge_id=challenge_id)		
-			return render_template('pages/challenge.html', challenge=challenge, attack=attack, attackers=attackers)
+			return redirect('/dashboard/challenge/'+str(challenge_id)+'/profile')
 	except Exception, e:
 		print e
 		flash('That is not something you are allowed to do.')
 		return redirect('/dashboard')
+
+	try:
+		attack = db_man.get_attacks(user_id=g.user['user_id'], challenge_id=challenge_id)[0]
+	except:
+		attack = None
 
 	difficulty_estimate = db_man.get_difficulty_estimate(challenge_id=challenge_id, version=challenge['latest_version'])[0]
 	if(request.method == "POST"):

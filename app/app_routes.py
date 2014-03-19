@@ -719,6 +719,11 @@ def deny(challenge_id):
 ###################################
 # Error Handlers
 ###################################
+# handles 403 errors
+@app.errorhandler(403)
+def access_denied(e):
+	return render_template('errors/403.html'), 403
+	
 # handles 404 errors
 @app.errorhandler(404)
 def page_not_found(e):
@@ -762,7 +767,7 @@ def before_request() :
 		session['_csrf_token'] = None
 		if not token or token != request.form.get('_csrf_token'):
 			flash('You were just protected from CSRF, if this was in ERROR, Sorry.')
-			abort(418)
+			abort(403)
 	try:
 		if(session['_csrf_token'] is None):
 			session['_csrf_token'] = db_man.genkey(213)

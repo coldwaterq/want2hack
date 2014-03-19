@@ -598,12 +598,12 @@ def user_signup() :
 					if(app.config['DEBUG']):
 						print conf_key+' '+usr
 				else :
-					flash('There was an issue creating your account, please try again.')
-
+					flash('There was an issue creating your account, try a different username')
+					return redirect('/user/signup')
 			except Exception, e:
 				# TODO: check for unique column error, not general
-				traceback.print_exc()
-				flash('User already exists with that information.')
+				app.logger.critical('signup problem'+str(e))
+				flash('Something went wrong, it has been reported')
 			
 			return redirect('/')
 			
@@ -808,7 +808,7 @@ def teardown_request(exception) :
 def record(response):
 	try:
 		g.conn.close()
-		print(request.remote_addr+' | '+str(response.status_code)+' | '+request.url)
-	except:
-		traceback.print_exc()
+		app.logger.info(request.remote_addr+' | '+str(response.status_code)+' | '+request.url)
+	except Exception, e:
+		app.logger.error('request logging'+str(e))
 	return(response)

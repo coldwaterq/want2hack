@@ -23,10 +23,10 @@ app.config['DIFFICULTY'] = ['Script Kiddy','Easy','Normal','Hard','1337']
 app.config['SESSION_COOKIE_NAME'] = 'Vkd0R1RsSlJQVDA9'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['CHALLENGE_PAGE_404'] = '<html><h1>WTF</h1><p>This challenge does not have content for this page. You are either headed in the wrong direction or you need to do some guessing. If this is the first page of the challenge, then you definitely need to do some guessing.</p></html>'
-app.config['FILE_REGEX'] = '^[a-zA-Z0-9.-_]*$'
-app.config['FOLDER_REGEX'] = '^[a-zA-Z0-9.-_/]*$'
-app.config['USERNAME_REGEX'] = '^[a-zA-Z0-9\-_!@#$%^&*()+=|;:\'/?.,~`\^ ]*$'
-app.config['EMAIL_REGEX'] = '^[a-zA-Z0-9+_.\-]*@[a-zA-Z0-9+_.\-]*$'
+app.config['FILE_REGEX'] = '^[a-zA-Z0-9.-_]+$'
+app.config['FOLDER_REGEX'] = '^[a-zA-Z0-9.-_/]+$'
+app.config['USERNAME_REGEX'] = '^[a-zA-Z0-9\-_!@#$%^&*()+=|;:\'/?.,~`\^ ]+$'
+app.config['EMAIL_REGEX'] = '^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9+_.\-]+$'
 
 # Configurable Configuration, use the configuration file
 defaults = {'DEBUG':True,

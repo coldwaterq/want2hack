@@ -305,6 +305,9 @@ def dashboard():
 @require_user
 def challenge_profile(challenge_id):
 	challenge = db_man.get_challenge(challenge_id=challenge_id)
+	if(challenge is None):
+		flash('That is not something you are allowed to do.')
+		return(redirect('/dashboard'))
 	try:
 		attack = db_man.get_attacks(user_id=g.user['user_id'], challenge_id=challenge_id)[0]
 	except:
@@ -328,7 +331,7 @@ def singal_challenge(challenge_id):
 	challenge = db_man.get_challenge(challenge_id=challenge_id)
 	if(challenge is None):
 		flash('That is not something you are allowed to do.')
-		return redirect('/dashboard')
+		return(abort(418))
 	try:
 		if challenge['owner_id']!=g.user['user_id'] :
 			return redirect('/dashboard/challenge/'+str(challenge_id)+'/profile')
@@ -529,6 +532,10 @@ def user_profile(user=None) :
 		return render_template('pages/user_settings.html')
 	
 	user_prof = db_man.get_user(username = user)
+	if(user_prof is None):
+		flash('That is not something you are allowed to do.')
+		return(abort(418))
+
 	attacks = db_man.get_attacks(user_id=user_prof['user_id'], completed=True)
 	challenges = db_man.get_challenges(user_id=user_prof['user_id'], approved=True)
 
@@ -575,10 +582,16 @@ def user_signup() :
 			return redirect('/user/signup') 
 		elif re.match(app.config['EMAIL_REGEX'],request.form['email']) is None:
 			flash('Your email is invalid, '+app.config['EMAIL_REGEX']+' is allowed')
-			return redirect('/user/signup') 
+			return redirect('/user/signup')
+		elif len(request.form['username']) > 34:
+			flash('Your username can only be 34 characters long')
+			return redirect('/user/signup')
+		elif len(request.form['email']) > 64:
+			flash('Congradulations, you have an incredibly long email. In fact I think it is too long')
+			return redirect('/user/signup')
 		else :
 			try :
-				usr = request.form['username'].lower()
+				usr = request.form['username']
 				email = request.form['email']
 
 				# get the confirmation key and replace problamatic characters
@@ -628,7 +641,7 @@ def reset() :
 	if(request.method == 'GET'):
 		return render_template('pages/password_reset.html')
 	conf_key = db_man.genkey(64)
-	username = request.form['username'].lower()
+	username = request.form['username']
 	user = db_man.password_reset(username=username, conf_key=conf_key)
 	if(user is None):
 		flash('If that account existed, a password reset email was sent to it.')
@@ -653,7 +666,7 @@ def reset() :
 		flash('You should recieve a reset email shortly, it may be in spam.')
 	else:
 		flash('If that account existed, a password reset email was sent to it. It may be in spam.')
-	return redirect('/user/signout')
+	return redirect('/dashboard')
 
 # User confirmation
 @app.route('/user/confirm/<user>/<confirmation>', methods=['GET','POST'])

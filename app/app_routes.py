@@ -14,6 +14,7 @@ from shutil import rmtree
 import traceback
 import re
 from urllib import quote
+import time
 
 app = Flask("__main__") # This is not used correctly as of now.
 
@@ -181,6 +182,7 @@ def challenge_router(challenge_id36, url=None) :
 		return redirect('//'+app.config['SERVER_NAME'] + '/dashboard/challenge/' + str(challenge_attack['challenge_id']))
 	# before returning the file, check if win page?
 	resp = file_man.serve_challenge_file(directory = url, challenge_id = challenge_attack['challenge_id'])
+	t = time.time()
 	if(challenge_attack['flag_seed'] in resp.data):
 		if(challenge_attack['owner_id']==g.user['user_id']):
 			flash('It worked! but since you made it, you don\'t get points')
@@ -194,6 +196,11 @@ def challenge_router(challenge_id36, url=None) :
 			else:
 				flash('Go home '+app.config['SERVER_NAME']+', your drunk. Report this bug that kept you from getting points')
 		return(redirect('//'+app.config['SERVER_NAME']+'/challenge/finish/'+str(challenge_id)))
+	delta = 0.001
+	if(time.time()-t > delta):
+		app.logger.warning('time to check win was '+str(time.time()-t)+' to protect against constant time comparison the current limit of '+str(delta)+' should be increased')
+	while(time.time()-t < delta):
+		time.sleep(delta/10)
 	return resp
 
 # The landing page to help keep people from beeing stupid

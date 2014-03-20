@@ -7,13 +7,11 @@ case "$1" in
     # run application you want to start
     cd {SERVER_ROOT}/app/
     {SERVER_ROOT}/app/server.py &
-    {SERVER_ROOT}/app/server_secure.py &
     ;;
   stop)
     echo "Stopping want2hack"
     # kill application you want to stop
     killall server.py
-    killall server_secure.py
     ;;
   restart)
     /etc/init.d/want2hack stop

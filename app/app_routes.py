@@ -53,13 +53,10 @@ def decode(challenge_id36):
 def require_ssl(fn) :
 	@wraps(fn)
 	def decor(*args, **kwargs) :
-		try:
-			if app.config['SSL'] :
-				return fn(*args, **kwargs)
-		except KeyError:
-			if app.config['DEBUG']:
-				return fn(*args, **kwargs)
-		return redirect(request.url.replace('http://','https://'))
+		if(request.url.startswith('https://')):
+			return fn(*args, **kwargs)
+		else:
+			return redirect(request.url.replace('http://','https://'))
 	return decor
 
 # makes sure that a user is logged in, and that ssl is being used,
@@ -312,7 +309,7 @@ def challenge_profile(challenge_id):
 		attackers = db_man.get_attackers(challenge_id=challenge_id)		
 		return render_template('pages/challenge.html', challenge=challenge, attack=attack, attackers=attackers)
 	except Exception, e:
-		print e
+		app.logger.warning('challenge_profile '+str(e))
 		flash('That is not something you are allowed to do.')
 		return redirect('/dashboard')
 
@@ -326,7 +323,7 @@ def singal_challenge(challenge_id):
 		if challenge['owner_id']!=g.user['user_id'] :
 			return redirect('/dashboard/challenge/'+str(challenge_id)+'/profile')
 	except Exception, e:
-		print e
+		app.logger.warning('singal_challenge '+str(e))
 		flash('That is not something you are allowed to do.')
 		return redirect('/dashboard')
 
@@ -353,7 +350,7 @@ def singal_challenge(challenge_id):
 				try:
 					app.config['MAIL'].send(msg)
 				except Exception, e:
-					app.logger.warning('The "challenge is awaiting approval" message was not sent because of ' + e)
+					app.logger.warning('The "challenge is awaiting approval" message was not sent because off ' + str(e))
 
 		else:
 			name = request.form['name']
@@ -461,7 +458,7 @@ def new_challenge():
 		file_man.create_challenge(challenge_id)
 		flash('Your challenge has been created')
 	except Exception, e:
-		traceback.print_exc()
+		app.logger.warning(e)
 		flash('There was an error creating that challenge')
 	return redirect('/dashboard')
 
@@ -489,7 +486,7 @@ def update(challenge_id):
 		flash('update worked')
 		return redirect('/dashboard/challenge/'+str(challenge_id))
 	except Exception, e:
-		traceback.print_exc()
+		app.logger.error('update '+str(e))
 		flash('Update failed')
 	return redirect('/dashboard')
 
@@ -592,8 +589,7 @@ def user_signup() :
 					try:
 						app.config['MAIL'].send(msg)
 					except Exception, e:
-						if not app.config['DEBUG']:
-							 traceback.print_exc()
+						app.logger.error('signup '+str(e))
 					flash('Account successfully created. Please check your email for confirmation instructions. It may be in spam.')
 					if(app.config['DEBUG']):
 						print conf_key+' '+usr
@@ -640,8 +636,7 @@ def reset() :
 	try:
 		app.config['MAIL'].send(msg)
 	except Exception, e:
-		if not app.config['DEBUG']:
-			 traceback.print_exc()
+		app.logger.error('send reset'+str(e))
 	if(app.config['DEBUG']):
 		print conf_key+' '+username
 	if(g.user is not None):

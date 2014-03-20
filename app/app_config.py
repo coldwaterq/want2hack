@@ -90,6 +90,10 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
 from logging import FileHandler
 from logging.handlers import SMTPHandler
 import logging
+app.logger.setLevel(logging.DEBUG) # so the loggers work
+if(not app.config['DEBUG']):
+    app.logger.propagate = False
+
 fhandler = FileHandler('/var/log/want2hack.log', mode='a')
 fhandler.setLevel(logging.INFO)
 app.logger.addHandler(fhandler)
@@ -103,8 +107,8 @@ if(app.config['LOGGING_TO_ADDR'] != None and app.config['LOGGING_TO_ADDR'] != 'N
     emailhandler.setLevel(logging.WARNING)
     app.logger.addHandler(emailhandler)
 
-print("The current root of the server is "+app.config['SERVER_ROOT'])
-print("SERVER_NAME: "+app.config['SERVER_NAME'])
+app.logger.info("The current root of the server is "+app.config['SERVER_ROOT'])
+app.logger.info("SERVER_NAME: "+app.config['SERVER_NAME'])
 app.url_map.default_subdomain =''
 
 # The Mailer, because it was initialized before the settings otherwise

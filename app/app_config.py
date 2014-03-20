@@ -90,12 +90,15 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
 from logging import FileHandler
 from logging.handlers import SMTPHandler
 import logging
+
 app.logger.setLevel(logging.DEBUG) # so the loggers work
 if(not app.config['DEBUG']):
     app.logger.propagate = False
 
 fhandler = FileHandler('/var/log/want2hack.log', mode='a')
 fhandler.setLevel(logging.INFO)
+format = logging.Formatter('%(asctime)s | %(message)s')
+fhandler.setFormatter(format)
 app.logger.addHandler(fhandler)
 if(app.config['LOGGING_TO_ADDR'] != None and app.config['LOGGING_TO_ADDR'] != 'NoOne'):
     emailhandler = SMTPHandler((app.config['MAIL_SERVER'],app.config['MAIL_PORT']),

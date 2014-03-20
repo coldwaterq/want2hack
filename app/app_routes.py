@@ -326,6 +326,9 @@ def challenge_profile(challenge_id):
 @require_user
 def singal_challenge(challenge_id):
 	challenge = db_man.get_challenge(challenge_id=challenge_id)
+	if(challenge is None):
+		flash('That is not something you are allowed to do.')
+		return redirect('/dashboard')
 	try:
 		if challenge['owner_id']!=g.user['user_id'] :
 			return redirect('/dashboard/challenge/'+str(challenge_id)+'/profile')

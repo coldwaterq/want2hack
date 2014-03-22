@@ -1,17 +1,22 @@
 #include <tunables/global>
  
 {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/** {
-    set rlimit nproc <= 5,
+    set rlimit nproc <= 8,
     set rlimit fsize <= 200K,
-    set rlimit as <= 100M,
+    set rlimit as <= 265M,
     set rlimit nofile <= 75,
     {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/** rwklmpx,
     {SERVER_ROOT}sand/{CHALLENGE}/{ATTACKER}/ rwklmpx,
     /etc/passwd r,
     deny network,
     #include <abstractions/base>
+    
     #include <abstractions/python>
     /usr/bin/python2.7 r,
+
     #include <abstractions/php5>
     /usr/bin/php5-cgi r,
+
+    /usr/bin/phantomjs ixr,
+    /etc/fonts/** r,
 } 

@@ -11,6 +11,7 @@ import traceback
 import re
 from werkzeug.exceptions import ImATeapot
 import string
+import glob
 
 class FileManager :
     app=None
@@ -28,7 +29,7 @@ class FileManager :
                 fi=fi[:-1]
             if(not path.normpath(fi) == fi and foldername != ''):
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
-            if(not secure_filename(filename) == filename):
+            if(not secure_filename(filename) == filename and not '.'+secure_filename(filename) == filename):
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
             if(foldername != '' and not path.exists(fi)):
                 mkdir(fi)
@@ -125,9 +126,13 @@ class FileManager :
                 return(redirect('//'+self.app.config['SERVER_NAME']+'/challenge/checkout/'+str(challenge_id)))
             directory = directory.partition('?')[0]
             ftest = self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'
-            if( not path.normpath(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'+directory)[:len(ftest)]==ftest):
+            if( not path.normpath(ftest+directory)[:len(ftest)]==ftest):
                 abort(418)
-            if( not path.exists(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'+directory) or directory[-1] == '/'):
+
+            if('/.' in path.normpath(ftest+directory)):
+                return(make_response(self.app.config['CHALLENGE_PAGE_404']))
+
+            if( not path.exists(ftest+directory) or directory[-1] == '/'):
                 # to support the whole index thing
                 if(directory == 'index' or directory[-1] == '/'):
                     d = directory.rpartition('/')[0]
@@ -145,6 +150,7 @@ class FileManager :
                         directory = d+'/'+'index.html'
                     if(directory[0]=='/'):
                         directory = directory[1:]
+
             try:
                 resp = self.make_response_challenge(attacker, challenge_id, directory)
             except Exception, e:

@@ -18,7 +18,7 @@
 	{% if not hof %}
 		<p>No one has done anything fame worthy, that sucks.</p>
 	{% else %}
-		<table id='table' class="pure-table pure-table-horizontal">
+		<table id='table' class="pure-table pure-table-horizontal table">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -28,7 +28,7 @@
 			</thead>
 			<tbody>
 				{% for entry in hof %}
-					<tr onclick="document.location='/user/{{entry['username']}}';" {% if( hof.index(entry) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<tr onclick="document.location='/user/{{entry['username']}}';" >
 						<td>{{entry['username']}}</td>
 						<td>
 							{{entry['user_points_received']}}

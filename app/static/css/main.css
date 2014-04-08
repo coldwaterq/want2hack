@@ -51,3 +51,11 @@ body, html{
     width:100%;
   }
 }
+
+.table tr:hover{
+  background-color: #ECFFB3 !important;
+}
+
+.table tr:hover td.sorting_1, .table tr:hover td.sorting_2, .table tr:hover td.sorting_3, .table tr:hover td.sorting_4 {
+  background-color: #DCEFA3 !important;
+}

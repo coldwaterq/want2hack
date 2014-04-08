@@ -19,7 +19,7 @@
 	<p>Breaking Points: {{user_prof['attack_points']}}</p>
 	<p>Building Points: {{user_prof['challenge_points']}}</p>
 	{% if challenges %}
-		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal" >
+		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal table" >
 			<caption>Challenges Built</caption>
 			<thead>
 				<tr>
@@ -32,7 +32,7 @@
 			
 			<tbody>
 				{% for challenge in challenges %}
-					<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" {% if( challenges.index(challenge) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" >
 						<td>{{challenge['challenge_name']}}</td>
 						<td>{{challenge['latest_approved_version']}}</td>
 						<td>{{challenge['difficulty']}}{% if challenge['difficulty']==0 %}*{% endif %}</td>
@@ -47,7 +47,7 @@
 </div>
 <div class="pure-u-11-24">
 	{% if attacks %}
-		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal" >
+		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal table" >
 			<caption>Wins</caption>
 			<thead>
 				<tr>
@@ -60,7 +60,7 @@
 			
 			<tbody>
 				{% for attack in attacks %}
-					<tr onclick="document.location='/dashboard/challenge/{{attack['challenge_id']}}';" {% if( attacks.index(attack) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<tr onclick="document.location='/dashboard/challenge/{{attack['challenge_id']}}';" >
 						<td>{{attack['challenge_name']}}</td>
 						<td>{{attack['version_attacked']}}</td>
 						<td>{{attack['user_points_received']}}</td>

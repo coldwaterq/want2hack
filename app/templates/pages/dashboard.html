@@ -31,10 +31,10 @@ function current(name){
 	{% if not challenges %}
 		<p>Try making a challenge, and helping the others to learn.If you don't know how to start check out the <a href='/blog'>blog</a>.</p>
 	{% else %}
-		<table class="pure-table pure-table-horizontal" >
+		<table class="pure-table pure-table-horizontal table" >
 			<tbody>
 				{% for challenge in challenges %}
-						<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" {% if( challenges.index(challenge) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+						<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" >
 							<td>{{challenge['challenge_name']}}</td>
 							<td><a href="/dashboard/challenge/{{challenge['challenge_id']}}"><button class="pure-u-1 pure-button"><i class="icon-edit icon-large"></i><span class="pure-hidden-tablet pure-hidden-phone">Edit</span></button></a></td>
 							<form action="/dashboard/challenge/delete" method="post">
@@ -60,7 +60,7 @@ function current(name){
 	{% if not attacked %}
 		<p>You are not currently working on any challenges, <a href="/challenges">Find one now</a></p>
 	{% else %}
-		<table id="current" class="pure-table pure-table-horizontal" >
+		<table id="current" class="pure-table pure-table-horizontal table" >
 			<tbody>
 				{% for attack in attacked %}
 					{% if not attack['complete'] %}					
@@ -81,7 +81,7 @@ function current(name){
 			</tbody>
 		</table>
 		<div id="completed"  style="visibility:hidden;position:absolute;">
-			<table class="pure-table pure-table-horizontal">
+			<table class="pure-table pure-table-horizontal table">
 				<thead>
 					<tr>
 						<th>Name</th>

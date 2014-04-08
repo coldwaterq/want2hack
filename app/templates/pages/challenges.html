@@ -20,7 +20,7 @@
 		<p>No one has published a challenge yet, maybe you should try making one for others.</p>
 	{% else %}
 		<p id="hide">Search is done with javascript, if you want that you should turn javascript back on.</p>
-		<table id="table" class="pure-table pure-table-horizontal">
+		<table id="table" class="pure-table pure-table-horizontal table">
 			<thead>
 				<tr>
 					<th>Name</th>
@@ -31,7 +31,7 @@
 			</thead>
 			<tbody>
 				{% for (challenge,attack) in attacks_challenges %}
-					<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';" {% if( attacks_challenges.index((challenge,attack)) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<tr onclick="document.location='/dashboard/challenge/{{challenge['challenge_id']}}';"  >
 						<td>{{challenge['challenge_name']}}</td>
 						<td>
 							{% if challenge['difficulty'] != 0 %}

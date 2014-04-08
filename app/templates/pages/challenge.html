@@ -42,7 +42,7 @@
 <div class="pure-u-1-24"></div>
 <div class="pure-u-5-12">
 	{% if attackers %}
-		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal">
+		<table id='table' style="margin-top:0" class="pure-table pure-table-horizontal table">
 			<caption>Users who won</caption>
 			<thead>
 				<tr>
@@ -55,7 +55,7 @@
 			
 			<tbody>
 				{% for attacker in attackers %}
-					<tr onclick="document.location='/user/{{attacker['username']}}';" {% if( attackers.index(attacker) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<tr onclick="document.location='/user/{{attacker['username']}}';"  >
 						<td>{{attacker['username']}}</td>
 						<td>{{attacker['points']}}</td>
 						<td>{{attacker['version_attacked']}}</td>

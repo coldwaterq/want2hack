@@ -1,4 +1,4 @@
-	<table id="table" class="pure-table pure-table-horizontal">
+	<table id="table" class="pure-table pure-table-horizontal table">
 		<thead>
 			<tr>
 				<th>#</th>
@@ -12,7 +12,7 @@
 		
 		<tbody>
 			{% for leader in leaders %}
-				<tr onclick="document.location='/user/{{leader['username']}}';" {% if( leaders.index(leader) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+				<tr onclick="document.location='/user/{{leader['username']}}';"  >
 					<td>{{leaders.index(leader)}}</td>
 					<td>{{leader['username']}}</td>
 					<td>{{leader['attack_points']}}</td>

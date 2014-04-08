@@ -230,9 +230,9 @@ class FileManager :
                                  + "here is what was done thus far<h1>"
                                  + p.stdout.read())+'\n\n'+p.stderr.read()
             err =  p.stderr.read() 
-            if(err is not None and len(err) > 0):
-                return('\n\n'+err)
             resp = p.stdout.read()
+            if(err is not None and len(err) > 0):
+                resp = resp+'\n'+err
         else:
             return(self.app.config['CHALLENGE_PAGE_404'], 404)
         resp = re.split('(\r\n\r\n|\n\n|\r\r)',resp)

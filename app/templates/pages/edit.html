@@ -143,7 +143,14 @@ function save(name){
 				<option value = 5 {% if difficulty == 5 %}selected="selected"{% endif %}>1337</option>
 			</select>
 			<label for="des" class="pure-u-1">Description:</label>
-			<textarea name="description" id="des" clas="pure-u-1">{{challenge['description']}}</textarea>
+			<textarea name="description" id="des" class="pure-u-1">{{challenge['description']}}</textarea>
+			<script type="text/javascript">
+				$('#des').on( 'keyup', function (){
+				    $(this).height( 0 );
+				    $(this).height( this.scrollHeight );
+				});
+				$(function() {$('#des').keyup();}); 
+			</script>
 			<input class="pure-u-1 pure-button" type="submit" value="Update" />
 		</fieldset>
 	</form>

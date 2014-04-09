@@ -1,0 +1,15 @@
+#!/bin/bash
+connect=user@domain
+echo 'Copy Database, Database password:'
+ssh $connect 'pg_dump want2hack -U want2hack -h localhost -W > dbbackup'
+date=$(date +%Y%m%d);
+echo $date
+echo 'Encrypting file'
+ssh $connect 'openssl aes-256-cbc -in dbbackup -out '$date'want2hackdb.enc'
+echo 'tar sandbox files'
+ssh $connect 'cd {directory}; tar -cf ~/'$date'challenges.tar sand'
+echo 'copying files to local'
+scp $connect:$date* .
+#echo 'deleting remnents'
+ssh $connect 'rm dbbackup '$date'*'
+echo 'openssl aes-256-cbc -d -in '$date'want2hackdb.enc dbbackup to decrypt'

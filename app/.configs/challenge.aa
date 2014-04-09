@@ -14,4 +14,5 @@
     /usr/bin/python2.7 r,
     #include <abstractions/php5>
     /usr/bin/php5-cgi r,
+    /tmp/php* rw,
 } 

@@ -15,7 +15,7 @@ class ChangeServer(object):
     def __call__(self, environ, start_response):
 
         def custom_start_response(status, headers, exc_info=None):
-            headers.append(('Server', "run for you lives!"))
+            headers.append(('Server', "<marquee>Run for your lives!!!</marquee>"))
             headers.append(('X-Frame-Options','DENY'))
             headers.append(('Strict-Transport-Security','max-age=31337031337'))
             return start_response(status, headers, exc_info)
@@ -45,6 +45,7 @@ server = HTTPServer(WSGIContainer(ChangeServer(app)))
 secServer = HTTPServer(WSGIContainer(ChangeServer(app)), ssl_options={
     "certfile": os.path.join(app.config['KEY_DIR'], "want2hack.crt"),
     "keyfile": os.path.join(app.config['KEY_DIR'], "want2hack.key"),
+    "ciphers":"HIGH", # I want this to be diffie hellman, but haven't gotten it to work yet.
 })
 server.add_sockets(socket)
 secServer.add_sockets(secSocket)

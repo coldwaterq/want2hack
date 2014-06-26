@@ -196,7 +196,7 @@ def challenge_router(challenge_id36, url=None) :
 			else:
 				flash('Go home '+app.config['SERVER_NAME']+', your drunk. Report this bug that kept you from getting points')
 		return(redirect('//'+app.config['SERVER_NAME']+'/challenge/finish/'+str(challenge_id)))
-	delta = 0.001
+	delta = 0.002
 	if(time.time()-t > delta):
 		app.logger.warning('time to check win was '+str(time.time()-t)+' to protect against constant time comparison the current limit of '+str(delta)+' should be increased')
 	while(time.time()-t < delta):

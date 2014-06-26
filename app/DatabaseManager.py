@@ -253,7 +253,7 @@ class DatabaseManager :
     #     (acts as validation of session token as well)
     # provide username for other user
     @connect_func
-    def get_user(self,sql,conn, sesh=None, username=None) :
+    def get_user(self,sql,conn, sesh=None, username=None, user_id=None) :
         user = None
         try :
             # only session provided
@@ -264,6 +264,10 @@ class DatabaseManager :
             # only username provided
             elif username is not None :
                 sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points, email FROM want2hack.account WHERE username = %s LIMIT 1;", [username])
+                user = sql.fetchone()
+            # only userid provided
+            elif user_id is not None :
+                sql.execute("SELECT user_id, username, tagline, description, md5(email) as gravatar, Date_created, attack_points, challenge_points, email FROM want2hack.account WHERE user_id = %s LIMIT 1;", [user_id])
                 user = sql.fetchone()
             # return None
             else :

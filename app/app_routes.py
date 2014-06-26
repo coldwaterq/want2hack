@@ -738,7 +738,22 @@ def approve(challenge_id):
 		if challenge is None:
 			abort(404)
 		return render_template('pages/approve.html',files=files,challenge=challenge)
-	if db_man.approve(challenge_id=challenge_id):
+	elif request.method == 'POST' and db_man.approve(challenge_id=challenge_id):
+		reason = request.form.get('reason')
+		msg = Message("Challenge Approved")
+		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
+		msg.html =  '''
+					Your challenge on %s has been approved. This is the reason:
+					%s
+					Thank you,
+
+					%s
+					''' % (app.config['SERVER_NAME'], reason, app.config['SERVER_NAME']+' Team')
+		try:
+			app.config['MAIL'].send(msg)
+		except Exception, e:
+			app.logger.warning('The "challenge is awaiting approval" message was not sent because off ' + str(e))
+
 		file_man.approve(challenge_id=challenge_id)
 		flash('That challenge has been approved')
 	else:
@@ -750,7 +765,25 @@ def approve(challenge_id):
 def deny(challenge_id):
 	if(g.user['username'] not in app.config['ADMIN_USERS']):
 		abort(404)
-	if db_man.approve(challenge_id=challenge_id, approve=False):
+	if request.method == 'POST' and db_man.approve(challenge_id=challenge_id, approve=False):
+		reason = request.form.get('reason')
+		msg = Message("Challenge not approved")
+		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
+		msg.html =  '''
+					Your challenge on %s has been denied approval. This is the reason:
+					%s
+
+					If you can fix this issue and resubmit your challenge for approval it will be considered again.
+
+					Thank you,
+
+					%s
+					''' % (app.config['SERVER_NAME'], reason, app.config['SERVER_NAME']+' Team')
+		try:
+			app.config['MAIL'].send(msg)
+		except Exception, e:
+			app.logger.warning('The "challenge is awaiting approval" message was not sent because off ' + str(e))
+
 		flash('That challenge has been denied')
 	else:
 		flash('There was a problem denying that challenge. Please report it')

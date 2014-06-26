@@ -128,7 +128,13 @@ def contact():
 @app.route('/challenges')
 @require_user
 def challenges() :
+        page = request.args.get('page', 0, type=int)
+        count = request.args.get('count', 10, type=int)
 	challenges = db_man.get_challenges(approved=True)
+	try:
+		challenges = challenges[page*count:(page+1)*count]
+	except:
+		challenges = challenges[:10]
 	attacks_challenges = []
 	attacks = db_man.get_attacks(user_id=g.user['user_id'])
 	indexer = {}

@@ -129,7 +129,7 @@ def contact():
 @require_user
 def challenges() :
 	page = request.args.get('page', 0, type=int)
-	count = request.args.get('count', 10, type=int)
+	count = request.args.get('count', 8, type=int)
 	challenges = db_man.get_challenges(approved=True)
 	try:
 		challenges = challenges[page*count:(page+1)*count]
@@ -146,7 +146,7 @@ def challenges() :
 			attacks_challenges.append((challenge, attacks[index]))
 		except KeyError:
 			attacks_challenges.append((challenge, None))
-	return render_template('pages/challenges.html', attacks_challenges=attacks_challenges)
+	return render_template('pages/challenges.html', attacks_challenges=attacks_challenges, page=page, count=count)
 
 # The current scoreboard, shows the top 10 people, and the points they have
 # Should this be like challenges, and show all the users, or should we keep

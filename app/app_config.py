@@ -87,7 +87,7 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     app.config['MAIL_USERNAME'])
     
 # This catches all error messages on the server and logs them to the file erros.log
-from logging import FileHandler
+from logging import RotatingFileHandler
 from logging.handlers import SMTPHandler
 import logging
 
@@ -95,7 +95,7 @@ app.logger.setLevel(logging.DEBUG) # so the loggers work
 if(not app.config['DEBUG']):
     app.logger.propagate = False
 
-fhandler = FileHandler('/var/log/want2hack.log', mode='a')
+fhandler = RotatingFileHandler('/var/log/want2hack.log', mode='a', maxBytes=1048576, backupCount=5 )
 fhandler.setLevel(logging.INFO)
 format = logging.Formatter('%(asctime)s | %(message)s')
 fhandler.setFormatter(format)

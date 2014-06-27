@@ -623,6 +623,14 @@ class DatabaseManager :
     @connect_func
     def user_signup(self,sql,conn, username, email, conf_key) :
         try:
+            
+            sql.execute("""
+                DELETE 
+                FROM account 
+                WHERE (username=%s OR email=%s) 
+                    AND date_created != CURRENT_DATE 
+                    AND date_last_session IS NULL;
+                """, [username, email])
             sql.execute("""
                 INSERT INTO want2hack.account (username, email, confirmation)
                 VALUES (%s,%s,%s)

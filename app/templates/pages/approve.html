@@ -19,16 +19,18 @@ function web_view(name){
 
 </script>
 <div class="pure-u-1-24"></div>
-<div class="pure-u-11-12">
+<div class="pure-u-1">
 	<div class="pure-u-1">
-		<form method="POST" action="/approve/{{challenge['challenge_id']}}">
+		<form class="pure-u-1" method="POST" action="/approve/{{challenge['challenge_id']}}">
 			<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
-			<input class="pure-u-1 pure-button pure-button-primary" value="Approve {{challenge['challenge_name']}}" type="submit"/>
+			<input class="pure-u-1-3 pure-button pure-button-primary" value="Approve {{challenge['challenge_name']}}" type="submit"/>
+			<input class="pure-u-5-8" name="reason" placeholder="Reason"/>
 		</form>
 		<div class="pure-u-1"></div>
 		<form method="POST" action="/deny/{{challenge['challenge_id']}}">
 			<input id="csrf1" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
-			<input class="pure-u-1 pure-button pure-button-primary" value="Deny {{challenge['challenge_name']}}" type="submit" style="background: rgb(235, 10, 10);"/>
+			<input class="pure-u-1-3 pure-button pure-button-primary" value="Deny {{challenge['challenge_name']}}" type="submit" style="background: rgb(235, 10, 10);"/>
+			<input class="pure-u-5-8 pure-input" name="reason" placeholder="Reason"/>
 		</form>
 	</div>
 </div>

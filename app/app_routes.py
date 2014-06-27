@@ -744,10 +744,10 @@ def approve(challenge_id):
 		msg = Message("Challenge Approved")
 		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
 		msg.html =  '''
-					Your challenge on %s has been approved. This is the reason:
-					%s
-					Thank you,
-
+					Your challenge on %s has been approved. This is the reason:\n
+					%s\n
+					Thank you,\n
+					\n
 					%s
 					''' % (app.config['SERVER_NAME'], reason, app.config['SERVER_NAME']+' Team')
 		try:
@@ -772,13 +772,13 @@ def deny(challenge_id):
 		msg = Message("Challenge not approved")
 		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
 		msg.html =  '''
-					Your challenge on %s has been denied approval. This is the reason:
-					%s
-
-					If you can fix this issue and resubmit your challenge for approval it will be considered again.
-
-					Thank you,
-
+					Your challenge on %s has been denied approval. This is the reason:\n
+					%s\n
+					\n
+					If you can fix this issue and resubmit your challenge for approval it will be considered again.\n
+					\n
+					Thank you,\n
+					\n
 					%s
 					''' % (app.config['SERVER_NAME'], reason, app.config['SERVER_NAME']+' Team')
 		try:

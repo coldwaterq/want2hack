@@ -128,8 +128,8 @@ def contact():
 @app.route('/challenges')
 @require_user
 def challenges() :
-        page = request.args.get('page', 0, type=int)
-        count = request.args.get('count', 10, type=int)
+	page = request.args.get('page', 0, type=int)
+	count = request.args.get('count', 10, type=int)
 	challenges = db_man.get_challenges(approved=True)
 	try:
 		challenges = challenges[page*count:(page+1)*count]
@@ -739,6 +739,7 @@ def approve(challenge_id):
 			abort(404)
 		return render_template('pages/approve.html',files=files,challenge=challenge)
 	elif request.method == 'POST' and db_man.approve(challenge_id=challenge_id):
+		challenge = db_man.get_challenge(challenge_id=challenge_id, admin=True)
 		reason = request.form.get('reason')
 		msg = Message("Challenge Approved")
 		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
@@ -766,6 +767,7 @@ def deny(challenge_id):
 	if(g.user['username'] not in app.config['ADMIN_USERS']):
 		abort(404)
 	if request.method == 'POST' and db_man.approve(challenge_id=challenge_id, approve=False):
+		challenge = db_man.get_challenge(challenge_id=challenge_id, admin=True)
 		reason = request.form.get('reason')
 		msg = Message("Challenge not approved")
 		msg.recipients = [ db_man.get_user(user_id=challenge['owner_id'])['email'] ]
@@ -836,7 +838,7 @@ def before_request() :
 		g.user = db_man.get_user(sesh=session['infsek_user'])
 	except KeyError, e :
 		g.user = None
-	if(request.method=='POST' and request.host==app.config['SERVER_NAME']):
+	if(request.method!='GET' and request.host==app.config['SERVER_NAME']):
 		try:
 			token = session['_csrf_token']
 		except:

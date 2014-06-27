@@ -628,7 +628,7 @@ class DatabaseManager :
                 DELETE 
                 FROM account 
                 WHERE (username=%s OR email=%s) 
-                    AND date_created != CURRENT_DATE 
+                    AND date_created < CURRENT_DATE-1 
                     AND date_last_session IS NULL;
                 """, [username, email])
             sql.execute("""

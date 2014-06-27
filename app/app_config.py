@@ -87,7 +87,7 @@ app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     app.config['MAIL_USERNAME'])
     
 # This catches all error messages on the server and logs them to the file erros.log
-from logging import RotatingFileHandler
+from logging.handlers import RotatingFileHandler
 from logging.handlers import SMTPHandler
 import logging
 

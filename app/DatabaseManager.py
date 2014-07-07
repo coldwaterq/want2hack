@@ -623,7 +623,11 @@ class DatabaseManager :
     @connect_func
     def user_signup(self,sql,conn, username, email, conf_key) :
         try:
-            
+            # The next sql statement is removing accounts with that username
+            # or email if the account has never been logged into and the
+            # account is two or more days old. two or more was picked so
+            # that you can't delete an account that was made at 23:59 at
+            # 00:01
             sql.execute("""
                 DELETE 
                 FROM account 

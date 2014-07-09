@@ -28,4 +28,18 @@
 		</table>
 	{% endif %}
 </div>
+<h3>Analytics</h3>
+<div class="pure-u-1">
+	<table class="pure-table pure-table-horizontal">
+		<tbody>
+			{% for analytic in analytics %}
+				<tr {% if( analytics.index(analytic) % 2 == 1 ) %} class="pure-table-odd" {% endif %} >
+					<td>{{analytic['time']}}</td>
+					<td>{{analytic['username']}}</td>
+					<td>{{analytic['referer']}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 {% endblock %}

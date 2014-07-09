@@ -104,6 +104,7 @@ $ createlang plpython3u want2hack -U want2hack -h localhost -W
 $ psql want2hack -U want2hack -h localhost -W
 >> {want2hack password}
 psql> \i install.sql
+psql> \i add_analytics.sql
 psql> \q
 
 Run sudo server.py in the app directory, this will make your config.

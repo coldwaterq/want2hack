@@ -617,6 +617,27 @@ class DatabaseManager :
             return None
 
     #########################################################################################
+    # Analytics API
+    #########################################################################################
+    @connect_func
+    def track(self, sql, conn, username, referer, user_agent):
+        sql.execute("""
+            INSERT INTO want2hack.analytics (username, referer, user_agent)
+            VALUES (%s, %s, %s)
+            """, [username, referer, user_agent])
+        conn.commit()
+
+    @connect_func
+    def check_analytics(self, sql, conn, limit):
+        sql.execute("""
+            SELECT username, referer, time, user_agent
+            FROM want2hack.analytics
+            ORDER BY time DESC
+            LIMIT %s
+            """, [limit])
+        return sql.fetchall()
+
+    #########################################################################################
     # Login API
     #########################################################################################
 

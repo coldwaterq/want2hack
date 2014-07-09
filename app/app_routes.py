@@ -115,6 +115,20 @@ def blog():
 def about() :
 	return render_template('pages/about.html')
 
+# The analytics page which is included on every
+# page so that I know what people are doing on
+# the site.
+@app.route('/analytics')
+def analytics():
+	if g.user is None:
+		username = None
+	else:
+		username = g.user['username']
+	referer = request.referrer
+	user_agent = request.headers.get('User-Agent')
+	db_man.track(username=username, referer=referer, user_agent=user_agent)
+	return make_response()
+
 # A static page that contains our contact info
 # only gives out the email if the user is logged in
 @app.route('/contact')
@@ -154,16 +168,28 @@ def challenges() :
 @app.route('/scoreboard')
 @require_ssl
 def scoreboard():
+	page = request.args.get('page', 0, type=int)
+	count = request.args.get('count', 8, type=int)
 	leaders = db_man.get_leaders()
-	return render_template('pages/scoreboard.html', leaders=leaders)
+	try:
+		leaders = leaders[page*count:(page+1)*count]
+	except:
+		leaders = leaders[:10]
+	return render_template('pages/scoreboard.html', leaders=leaders, page=page, count=count)
 
 # The hall of fame where we give credit for people that have done really cool things on the site.
 # this needs the fancy tables like 
 @require_ssl
 @app.route('/hof')
 def hof():
+	page = request.args.get('page', 0, type=int)
+	count = request.args.get('count', 8, type=int)
 	hof = db_man.get_hall_of_fame()
-	return render_template('pages/hof.html', hof=hof)
+	try:
+		hof = hof[page*count:(page+1)*count]
+	except:
+		hof = hof[:10]
+	return render_template('pages/hof.html', hof=hof, page=page, count=count)
 
 
 # The challenge subdomains, it hands the content off to the user created content
@@ -710,7 +736,8 @@ def admin():
 	if(g.user['username'] not in app.config['ADMIN_USERS']):
 		abort(404)
 	approvals = db_man.challenges_needing_approval()
-	return render_template('pages/admin.html', approvals=approvals)
+	analytics = db_man.check_analytics(limit=100)
+	return render_template('pages/admin.html', approvals=approvals, analytics=analytics)
 
 @app.route('/admin/addhof', methods=['GET','POST'])
 @require_user
@@ -718,8 +745,10 @@ def add_hof():
 	if(g.user['username'] not in app.config['ADMIN_USERS']):
 		abort(404)
 	description = request.form['description']
-	user_id = request.form['user_id']
-	points = request.form['points']
+	user_id = int(request.form['user_id'])
+        if(user_id < 0):
+            return
+	points = int(request.form['points'])
 	if db_man.add_hall_of_fame(user_id=user_id, description=description, points=points):
 		flash('Hall of fame added')
 	else:

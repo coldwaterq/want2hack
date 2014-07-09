@@ -3,17 +3,28 @@
 <div class="pure-u-5-6" style="margin:auto;display:block;">
 	<h1 style="margin-top:0;">Challenges</h1>
 	{% if not attacks_challenges %}
-		<p>No one has published a challenge yet, maybe you should try making one for others.</p>
+		{% if page > 0 %}
+			<p>That's all folks, try decreasing the page or ammount of items shown</p>
+			{% if count > 1 %}
+				<a class="pure-u-6 pure-button" href="?page={{page}}&count={{(count/2)|int}}">Show {{(count/2)|int}}</a>
+			{% endif %}
+			{% if page > 0 %}
+				<a class="pure-u-6 pure-button" href="?page={{page-1}}&count={{count}}">- page</a>
+			{% endif %}
+		{% else %}
+			<p>No one has published a challenge yet, maybe you should try making one for others.</p>
+		{% endif %}
 	{% else %}
-		{% if page != 0 %}
+		{% if page > 0 %}
 			<a class="pure-u-6 pure-button" href="?page={{page-1}}&count={{count}}">- page</a>
 		{% endif %}
-		{% if count != 1 %}
+		{% if count > 1 %}
 			<a class="pure-u-6 pure-button" href="?page={{page}}&count={{(count/2)|int}}">Show {{(count/2)|int}}</a>
 		{% endif %}
-		<a class="pure-u-6 pure-button" href="?page={{page}}&count={{count*2}}">Show {{count*2}}</a>
-		<a class="pure-u-6 pure-button" href="?page={{page+1}}&count={{count}}">+ page</a>
-		<p id="hide">Search is done with javascript, if you want that you should turn javascript back on.</p>
+		{% if attacks_challenges.__len__() == count %}
+			<a class="pure-u-6 pure-button" href="?page={{page}}&count={{count*2}}">Show {{count*2}}</a>
+			<a class="pure-u-6 pure-button" href="?page={{page+1}}&count={{count}}">+ page</a>
+		{% endif %}
 		<table id="table" class="pure-table pure-table-horizontal table">
 			<thead>
 				<tr>

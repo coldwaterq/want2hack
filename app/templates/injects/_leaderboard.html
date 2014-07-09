@@ -13,7 +13,11 @@
 		<tbody>
 			{% for leader in leaders %}
 				<tr onclick="document.location='/user/{{leader['username']}}';"  >
-					<td>{{leaders.index(leader)}}</td>
+					{% if page is defined and count is defined %}
+						<td>{{count*page+leaders.index(leader)}}</td>
+					{% else %}
+						<td>{{leaders.index(leader)}}</td>
+					{% endif %}
 					<td>{{leader['username']}}</td>
 					<td>{{leader['attack_points']}}</td>
 					<td>{{leader['challenge_points']}}</td>

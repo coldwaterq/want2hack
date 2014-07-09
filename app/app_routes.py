@@ -746,8 +746,8 @@ def add_hof():
 		abort(404)
 	description = request.form['description']
 	user_id = int(request.form['user_id'])
-        if(user_id < 0):
-            return
+	if(user_id < 0):
+		return
 	points = int(request.form['points'])
 	if db_man.add_hall_of_fame(user_id=user_id, description=description, points=points):
 		flash('Hall of fame added')
@@ -843,7 +843,7 @@ def I_am_a_teapot(e):
 	if(g.user is None):
 		flash('I don\'t know how you got this without being logged in but please report it. You will be non-monitarilly rewarded.')
 	else:
-		if(db_man.add_hall_of_fame(user_id=g.user['user_id'], description='You found the mithical teapot', points=4)):
+		if(db_man.add_hall_of_fame(user_id=g.user['user_id'], description='For finding the mythical teapot', points=5)):
 			flash('Congrats, you found the teapot, and recieved some points')
 		else:
 			flash('You keep finding the teapot')

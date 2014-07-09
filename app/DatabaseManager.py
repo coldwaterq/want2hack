@@ -99,7 +99,6 @@ class DatabaseManager :
                     FROM want2hack.hof h
                     LEFT JOIN want2hack.account u
                         ON h.user_id=u.user_id
-                    WHERE h.description != 'You found the mithical teapot'
                     ORDER BY h.user_points_received DESC;
                 """)
             hof = sql.fetchall()

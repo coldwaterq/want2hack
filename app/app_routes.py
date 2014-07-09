@@ -118,7 +118,7 @@ def about() :
 # The analytics page which is included on every
 # page so that I know what people are doing on
 # the site.
-@app.route('/analytics')
+@app.route('/anal')
 def analytics():
 	if g.user is None:
 		username = None

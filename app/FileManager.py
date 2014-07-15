@@ -12,6 +12,7 @@ import re
 from werkzeug.exceptions import ImATeapot
 import string
 import glob
+from codecs import open
 
 class FileManager :
     app=None
@@ -35,7 +36,7 @@ class FileManager :
                 mkdir(fi)
             if(filename != ''):
                 fi = path.normpath(fi)+'/'+filename
-                open(fi,'w').close()
+                open(fi,'w',encoding='utf-8').close()
             chmod(fi, S.S_IRWXU | S.S_IRWXG | S.S_IRWXO)
             return('The file has been made')
         except Exception, e:
@@ -73,7 +74,7 @@ class FileManager :
         fi = self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/base'+self.get_files(challenge_id)[int(name_id)][0]
         if( secure_filename(str(challenge_id)) == str(challenge_id)
             and secure_filename(name_id)==name_id):
-            f = open(fi,'w')
+            f = open(fi,'w',encoding='utf-8')
             f.write(content)
             f.close()
 
@@ -90,7 +91,7 @@ class FileManager :
         files = []
         for f in efiles:
             try:
-                content = open(fi+f).read()
+                content = open(fi+f,encoding='utf-8').read()
             except:
                 content=None
             files.append((f,content,efiles.index(f),content is not None))
@@ -108,7 +109,7 @@ class FileManager :
         files = []
         for f in efiles:
             try:
-                content = open(fi+f).read()
+                content = open(fi+f,encoding='utf-8').read()
             except:
                 content=None
             files.append((f,content,efiles.index(f),content is not None))
@@ -157,7 +158,7 @@ class FileManager :
                 if(self.app.config['DEBUG']):
                     self.app.logger.warning('serve_challenge_file1 '+str(e))
                 try:
-                    return(make_response(open(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'+directory).read()))
+                    return(make_response(open(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/'+attacker+'/'+directory,encoding='utf-8').read()))
                 except:
                     return(make_response(self.app.config['CHALLENGE_PAGE_404']))
             return make_response(resp)        
@@ -279,7 +280,7 @@ class FileManager :
             rmtree(fi)
         try:
             copytree(self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+('/base' if owner else '/base-published'), fi)
-            temp = open('.configs/challenge.aa').read()
+            temp = open('.configs/challenge.aa',encoding='utf-8').read()
             temp = temp.replace('{SERVER_ROOT}',self.app.config['SERVER_ROOT'])
             temp = temp.replace('{CHALLENGE}',str(challenge_id))
             temp = temp.replace('{ATTACKER}',attacker)

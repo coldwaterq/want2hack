@@ -843,7 +843,9 @@ def I_am_a_teapot(e):
 	if(g.user is None):
 		flash('I don\'t know how you got this without being logged in but please report it. You will be non-monitarilly rewarded.')
 	else:
-		if(db_man.add_hall_of_fame(user_id=g.user['user_id'], description='For finding the mythical teapot', points=5)):
+		if( g.user['username'] in app.config['ADMIN_USERS'] ):
+			flash('Since youa are an admin you don\'t get points')
+		elif( db_man.add_hall_of_fame(user_id=g.user['user_id'], description='For finding the mythical teapot', points=5)):
 			flash('Congrats, you found the teapot, and recieved some points')
 		else:
 			flash('You keep finding the teapot')

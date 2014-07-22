@@ -233,7 +233,7 @@ class FileManager :
             while(p.poll()==None):
                 if(time()-t > self.app.config['CHALLENGE_TIMEOUT']):
                     p.kill()
-                    return( "\n\n<h1>ERROR: This script ran to long, we killed it, "
+                    return( "<h1>ERROR: This script ran to long, we killed it, "
                                  + "here is what was done thus far<h1>"
                                  + p.stdout.read())+'\n\n'+p.stderr.read()
             err =  p.stderr.read() 

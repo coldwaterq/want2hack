@@ -167,7 +167,7 @@ function save(name){
 	<input id="v3" class="pure-u-1" name="version" value="{{challenge['latest_approved_version']}}" disabled />
 </div>
 <div class="pure-u-1-2 edit">
-        <p id='explain' style="visibility:hidden;">The first line should be "#!/usr/bin/php-cgi" for php or "#!/usr/bin/python" for python. don't start with #! if you want plain text like html returned. If you need some help check out the <a href='/blog'>blog</a></p> 
+        <p id='explain' style="visibility:hidden;">The first line should be "#!/usr/bin/php-cgi" for php or "#!/usr/bin/python" for python. don't start with #! if you want plain text like html returned. If you need some help check out the <a href='/blog'>blog</a>. Add -u to the python #! to allow for timeouts to show the ouput you expect.</p> 
         <textarea id="content" class="pure-u-1" rows=20 style="visibility:hidden;" ></textarea>
 </div>
 {% endblock %}

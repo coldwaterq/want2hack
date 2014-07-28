@@ -883,7 +883,6 @@ def teardown_request(exception) :
 @app.after_request
 def record(response):
 	try:
-		g.conn.close()
 		app.logger.info(request.remote_addr+' | '+str(response.status_code)+' | '+request.url)
 		if g.user is None:
 			username = None
@@ -892,6 +891,7 @@ def record(response):
 		referer = request.url
 		user_agent = request.headers.get('User-Agent')
 		db_man.track(username=username, referer=referer, user_agent=user_agent)
+		g.conn.close()
 	except Exception, e:
 		app.logger.error('request logging'+str(e))
 	return(response)

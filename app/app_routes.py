@@ -115,20 +115,6 @@ def blog():
 def about() :
 	return render_template('pages/about.html')
 
-# The analytics page which is included on every
-# page so that I know what people are doing on
-# the site.
-@app.route('/a')
-def analytics():
-	if g.user is None:
-		username = None
-	else:
-		username = g.user['username']
-	referer = request.referrer
-	user_agent = request.headers.get('User-Agent')
-	db_man.track(username=username, referer=referer, user_agent=user_agent)
-	return make_response()
-
 # A static page that contains our contact info
 # only gives out the email if the user is logged in
 @app.route('/contact')
@@ -899,6 +885,13 @@ def record(response):
 	try:
 		g.conn.close()
 		app.logger.info(request.remote_addr+' | '+str(response.status_code)+' | '+request.url)
+		if g.user is None:
+			username = None
+		else:
+			username = g.user['username']
+		referer = request.url
+		user_agent = request.headers.get('User-Agent')
+		db_man.track(username=username, referer=referer, user_agent=user_agent)
 	except Exception, e:
 		app.logger.error('request logging'+str(e))
 	return(response)

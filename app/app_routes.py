@@ -365,6 +365,21 @@ def singal_challenge(challenge_id):
 
 	difficulty_estimate = db_man.get_difficulty_estimate(challenge_id=challenge_id, version=challenge['latest_version'])[0]
 	if(request.method == "POST"):
+		# All posts update the name, difficulty, and description.
+		name = request.form['name']
+		difficulty=int(request.form['difficulty'])
+		description = request.form['description']
+		if(re.match(app.config['USERNAME_REGEX'], name) is None or difficulty < 1 or difficulty > 5):
+			flash('Those inputs were invalid, '+app.config['USERNAME_REGEX']+' is allowed')
+			return redirect('/dashboard/challenge/'+str(challenge_id))
+		success = db_man.update_challenge(challenge_id=challenge_id, name=name, difficulty=difficulty, version=challenge['latest_version'], description=description)
+		if(success):
+			flash('The settings have been changed')
+		else:
+			flash('There was an error in saving the settings')
+
+
+		#Publish is the same as update, it just submits the challenge for approval.
 		publish = request.form.get('publish')
 		if publish is not None:
 			if(db_man.publish(challenge_id=challenge_id, latest_version=challenge['latest_version'], difficulty_estimate=difficulty_estimate)):
@@ -382,19 +397,6 @@ def singal_challenge(challenge_id):
 					app.config['MAIL'].send(msg)
 				except Exception, e:
 					app.logger.warning('The "challenge is awaiting approval" message was not sent because off ' + str(e))
-
-		else:
-			name = request.form['name']
-			difficulty=int(request.form['difficulty'])
-			description = request.form['description']
-			if(re.match(app.config['USERNAME_REGEX'], name) is None or difficulty < 1 or difficulty > 5):
-				flash('Those inputs were invalid, '+app.config['USERNAME_REGEX']+' is allowed')
-				return redirect('/dashboard/challenge/'+str(challenge_id))
-			success = db_man.update_challenge(challenge_id=challenge_id, name=name, difficulty=difficulty, version=challenge['latest_version'], description=description)
-			if(success):
-				flash('The settings have been changed')
-			else:
-				flash('There was an error in saving the settings')
 		return redirect('/dashboard/challenge/'+str(challenge_id))
 	if challenge is not None:
 		files = file_man.get_files(challenge_id)
@@ -416,13 +418,14 @@ def add_file(challenge_id):
 		return abort(418)
 	foldername=request.form['foldername']
 	filename=request.form['filename']
-        if(re.match(app.config['FILE_REGEX'], filename) is None and filename is not None):
+	file_contents = request.files['file']
+	if(re.match(app.config['FILE_REGEX'], filename) is None and filename is not None):
 		flash('The file name is invalid, '+app.config['FILE_REGEX']+' is allowed')
 		return redirect('/dashboard/challenge/'+str(challenge_id))
 	if(re.match(app.config['FOLDER_REGEX'], foldername) is None and foldername is not None) :
 		flash('The folder name is invalid, '+app.config['FOLDER_REGEX']+' is allowed')
 		return redirect('/dashboard/challenge/'+str(challenge_id))
-	flash(file_man.make_file(foldername, filename, challenge_id))
+	flash(file_man.make_file(foldername, filename, challenge_id, file_contents))
 	return redirect('/dashboard/challenge/'+str(challenge_id))
 
 # removes the file from the challenge
@@ -810,6 +813,12 @@ def deny(challenge_id):
 ###################################
 # Error Handlers
 ###################################
+# handles 400 errors
+@app.errorhandler(400)
+def Bad_Request(e):
+	app.logger.info(e)
+	return render_template('errors/400.html'), 400
+
 # handles 403 errors
 @app.errorhandler(403)
 def access_denied(e):

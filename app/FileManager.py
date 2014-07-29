@@ -23,8 +23,9 @@ class FileManager :
     
     # challenge_id
     # name
-    def make_file(self, foldername, filename, challenge_id):
+    def make_file(self, foldername, filename, challenge_id, file_contents):
         try:
+            created = False
             fi = self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/base/'+foldername
             if fi[-1]=='/':
                 fi=fi[:-1]
@@ -34,11 +35,17 @@ class FileManager :
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
             if(foldername != '' and not path.exists(fi)):
                 mkdir(fi)
+                created = True
             if(filename != ''):
                 fi = path.normpath(fi)+'/'+filename
                 open(fi,'w',encoding='utf-8').close()
-            chmod(fi, S.S_IRWXU | S.S_IRWXG | S.S_IRWXO)
-            return('The file has been made')
+                file_contents.save(fi)
+                created = True
+            if created:
+                chmod(fi, S.S_IRWXU | S.S_IRWXG | S.S_IRWXO)
+                return('The file has been made')
+            else:
+                return('There must be a filename or foldername.')
         except Exception, e:
             self.app.logger.warning('make_file '+str(e))
             return('There was an error making that file')        

@@ -86,6 +86,9 @@ for name in defaults.keys():
 app.config['ADMIN_USERS'] = eval(app.config['ADMIN_USERS'])
 app.config['MAIL_DEFAULT_SENDER'] = (app.config['MAIL_DEFAULT_SENDER_NAME'],
     app.config['MAIL_USERNAME'])
+
+# There shouldn't be any content length larger than 1Kb more than the max file size.
+app.config['MAX_CONTENT_LENGTH'] = app.config['MAX_FILE_SIZE'] + 1024
     
 # This catches all error messages on the server and logs them to the file erros.log
 from logging.handlers import RotatingFileHandler

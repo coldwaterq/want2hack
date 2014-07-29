@@ -120,11 +120,13 @@ function save(name){
 </div>
 <div id="other" class="pure-u-1-4 edit">
 	<h3>Create a file or folder</h3>
-	<form class="pure-form" action="/dashboard/challenge/add_file/{{challenge['challenge_id']}}" method="POST">
+	<p>If no file is specified to be uploaded, an empty file will be created.</p>
+	<form class="pure-form" enctype="multipart/form-data" action="/dashboard/challenge/add_file/{{challenge['challenge_id']}}" method="POST">
 		<input id="csrf2" type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
-        	<input placeholder="foldername" name="foldername" class="pure-input pure-u-11-24"/>
+		<input placeholder="foldername" name="foldername" class="pure-input pure-u-11-24"/>
 		<input placeholder="filename" name="filename" class="pure-input pure-u-11-24"/>
-        	<button type="submit" class="pure-button pure-u-23-24" ><i class="icon-plus icon-large"></i><span>Add</span></button>
+		<input placeholder="file to upload" name="file" class="pure-input pure-u-1" type="file"/>
+		<button type="submit" class="pure-button pure-u-23-24" ><i class="icon-plus icon-large"></i><span>Add</span></button>
 	</form>
 </div>
 <div id="two" class="pure-u-1-4 edit">

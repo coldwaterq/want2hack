@@ -73,7 +73,8 @@ class FileManager :
     def update_file(self, name_id, content, challenge_id):
         fi = self.app.config['SERVER_ROOT']+'sand/'+str(challenge_id)+'/base'+self.get_files(challenge_id)[int(name_id)][0]
         if( secure_filename(str(challenge_id)) == str(challenge_id)
-            and secure_filename(name_id)==name_id):
+                and secure_filename(name_id)==name_id
+                and len( bytearray(content, encoding='utf-8')) <= self.app.config['MAX_FILE_SIZE'] ):
             f = open(fi,'w',encoding='utf-8')
             f.write(content)
             f.close()

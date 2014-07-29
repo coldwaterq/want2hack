@@ -34,10 +34,10 @@ defaults = {'DEBUG':True,
     'SERVER_ROOT':'Set This',
     'SERVER_NAME':'testing.test',
     'SERVER_ADDR':'127.0.0.1',
-    'SERVER_UID':1000,
-    'SERVER_GID':65535,
+    'SERVER_UID':'1000',
+    'SERVER_GID':'65535',
     'MAIL_SERVER':'smtp.gmail.com',
-    'MAIL_PORT':587,
+    'MAIL_PORT':'587',
     'MAIL_USE_TLS':True,
     'DB_PASSWORD':'Set This',
     'MAIL_USERNAME':'Set This',
@@ -45,8 +45,9 @@ defaults = {'DEBUG':True,
     'MAIL_DEFAULT_SENDER_NAME':"Want2Hack",
     'ADMIN_USERS':[],
     'KEY_DIR':'/etc/ssl/certs',
-    'CHALLENGE_TIMEOUT':3,
-    'LOGGING_TO_ADDR':'NoOne'
+    'CHALLENGE_TIMEOUT':'3',
+    'LOGGING_TO_ADDR':'NoOne',
+    'MAX_FILE_SIZE': '204800'
     }
 conf = ConfigParser.SafeConfigParser(defaults)
 conf.read('/etc/want2hack.conf')
@@ -78,7 +79,7 @@ def getvalue(option):
         return conf.getboolean('DEFAULT', option)
     except ValueError:
         pass
-    return conf.get('DEFAULT', option)
+    return conf.get('DEFAULT', option, raw=True)
 
 for name in defaults.keys():
     app.config[name] = getvalue( name )

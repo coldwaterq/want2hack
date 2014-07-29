@@ -898,7 +898,8 @@ def record(response):
 			username = g.user['username']
 		referer = request.url
 		user_agent = request.headers.get('User-Agent')
-		db_man.track(username=username, referer=referer, user_agent=user_agent)
+		if( not referer.startswith('https://want2hack.com/static/') and referer != 'https://want2hack.com/favicon.ico'):
+			db_man.track(username=username, referer=referer, user_agent=user_agent)
 		g.conn.close()
 	except Exception, e:
 		app.logger.error('request logging'+str(e))

@@ -363,7 +363,6 @@ def singal_challenge(challenge_id):
 	except:
 		attack = None
 
-	difficulty_estimate = db_man.get_difficulty_estimate(challenge_id=challenge_id, version=challenge['latest_version'])[0]
 	if(request.method == "POST"):
 		# All posts update the name, difficulty, and description.
 		name = request.form['name']
@@ -382,7 +381,7 @@ def singal_challenge(challenge_id):
 		#Publish is the same as update, it just submits the challenge for approval.
 		publish = request.form.get('publish')
 		if publish is not None:
-			if(db_man.publish(challenge_id=challenge_id, latest_version=challenge['latest_version'], difficulty_estimate=difficulty_estimate)):
+			if(db_man.publish(challenge_id=challenge_id, latest_version=challenge['latest_version'], difficulty_estimate=difficulty)):
 				file_man.publish(challenge_id=challenge_id)
 				flash('The challenge has been submitted for approval, you are now working on the new one.')
 				msg = Message("Challenge Awaiting Approval")

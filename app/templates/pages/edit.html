@@ -7,7 +7,12 @@ var csrf="{{g.csrf}}"
 var classes = ['icon-chevron-right icon-large','icon-chevron-up icon-large','icon-chevron-left icon-large','icon-chevron-down icon-large']
 function edit(name){
 	if(!editting && !saving){
-		content = $("#c"+name).val();
+		if (localStorage.getItem(name) === null){
+			content = $("#c"+name).val();
+		}
+		else {
+			content = localStorage.getItem(name);
+		}
 		$("#content").val(content);
 		$("#other").attr('style','visibility:hidden;position:absolute;');
 		$("#two").attr('style','visibility:hidden;position:absolute;');
@@ -28,7 +33,8 @@ function edit(name){
 }
 saving=false;
 function save(name){
-        content = $("#content").val();
+	content = $("#content").val();
+	localStorage.setItem(name,content)
 	$("#c"+name).val(content);
 	$("#content").val("");
 	$('#content').attr('style','visibility:hidden');
@@ -49,6 +55,10 @@ function save(name){
 		$("#csrf2").val(csrf);
 		$("#csrf3").val(csrf);
 		saving=false;
+		localStorage.removeItem(name);
+	}).fail( function() {
+		alert('The save failed, however it has been saved locally, the page will reload now.');
+		location.reload();
 	});
 	editting=false;
 }

@@ -164,13 +164,9 @@ function save(name){
 				$(function() {$('#des').keyup();}); 
 			</script>
 			<input class="pure-u-1 pure-button" type="submit" value="Update" />
+			<input class="pure-u-1 pure-button pure-button-primary" type="submit" name="publish" value="Publish" /> 
 		</fieldset>
-	</form>
-	<form class="pure-form" action="/dashboard/challenge/{{challenge['challenge_id']}}" method="post">
-		<input class="pure-u-1 pure-button pure-button-primary" type="submit" value="Publish" />   
-		<input type="hidden" name="_csrf_token" value="{{g.csrf}}"/>
-		<input type="hidden" name="publish" value="t"/>
-	</form>     
+	</form>  
 	<label for="v1" class="pure-u-1">Current Version:</label>
 	<input id="v1" class="pure-u-1" name="version" value="{{challenge['latest_version']}}" disabled />
 	<label for="v2" class="pure-u-1">Published Version:</label>

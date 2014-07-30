@@ -425,6 +425,10 @@ def add_file(challenge_id):
 		flash('The folder name is invalid, '+app.config['FOLDER_REGEX']+' is allowed')
 		return redirect('/dashboard/challenge/'+str(challenge_id))
 	flash(file_man.make_file(foldername, filename, challenge_id, file_contents))
+
+	# Make the developer update the files
+	db_man.update(challenge_id=challenge_id,version=-1)
+	
 	return redirect('/dashboard/challenge/'+str(challenge_id))
 
 # removes the file from the challenge
@@ -439,6 +443,10 @@ def remove_file(challenge_id):
 		return abort(418)
 	name_id=request.form['name_id']
 	flash(file_man.remove_file(name_id, challenge_id))
+
+	# Make the developer update the files
+	db_man.update(challenge_id=challenge_id,version=-1)
+	
 	return redirect('/dashboard/challenge/'+str(challenge_id))
 
 # updates the contents of the challenge
@@ -454,6 +462,10 @@ def update_file(challenge_id):
 	content = request.form["content"]
 	name_id = request.form["name_id"]
 	file_man.update_file(name_id, content, challenge_id)
+
+	# Make the developer update the files
+	db_man.update(challenge_id=challenge_id,version=-1)
+	
 	return make_response(g.csrf)
 
 # deletes the challenge, keeping the files, but not allowing anyone to

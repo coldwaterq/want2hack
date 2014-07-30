@@ -33,19 +33,19 @@ class FileManager :
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
             if(not secure_filename(filename) == filename and not '.'+secure_filename(filename) == filename):
                 return('Stop hacking me! ahum, I mean. There was an error making that file')
+            if( path.exists( path.normpath(fi)+'/'+filename )):
+                return('The file already exists')
             if(foldername != '' and not path.exists(fi)):
                 mkdir(fi)
                 created = True
-            if(filename != ''):
-                fi = path.normpath(fi)+'/'+filename
+            fi = path.normpath(fi)+'/'+filename
+            if(filename != '' and not path.exists( fi ) ):
                 open(fi,'w',encoding='utf-8').close()
                 file_contents.save(fi)
                 created = True
             if created:
                 chmod(fi, S.S_IRWXU | S.S_IRWXG | S.S_IRWXO)
                 return('The file has been made')
-            else:
-                return('There must be a filename or foldername.')
         except Exception, e:
             self.app.logger.warning('make_file '+str(e))
             return('There was an error making that file')        

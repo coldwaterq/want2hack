@@ -1,4 +1,4 @@
-This is the sourcecode for a website that lets people make CTF web challenges for others, and then lets others solve the challenges.
+This is the sourcecode for a website that lets people make CTF web challenges for others, and then lets others solve the challenges and points are atributed to the challenge based on how many people have solved the challenge.
 
 List of dependencies (install with apt-get)
 python-flask

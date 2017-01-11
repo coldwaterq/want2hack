@@ -1,3 +1,5 @@
+This is the sourcecode for a website that lets people make CTF web challenges for others, and then lets others solve the challenges.
+
 List of dependencies (install with apt-get)
 python-flask
 postgresql

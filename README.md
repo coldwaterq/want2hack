@@ -1,3 +1,5 @@
+**THIS IS NOT SECURE, I LEAVE IT UP AS A REFERENCE, PLEASE USE SOMETHING LIKE https://ctfd.io INSTEAD**
+
 This is the sourcecode for a website that lets people make CTF web challenges for others, and then lets others solve the challenges and points are atributed to the challenge based on how many people have solved the challenge.
 
 List of dependencies (install with apt-get)
